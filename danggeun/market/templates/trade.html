@@ -39,25 +39,25 @@
     <div class="container column center">
       <div class="full-box trade-box column">
         <div class="flex-box full-box card-container between">
-          {% for post in posts %}
+          {% for product in products %}
 
             <div class="card-box">
-              <a href="{% url 'market:trade_post' post.pk %}" class="trade-text-link">
+              <a href="{% url 'market:trade_post' product.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if post.images %}
-                    <img src="{{ post.images.url }}" alt="{{ post.title }}">
+                  {% if product.images %}
+                    <img src="{{ product.images.url }}" alt="{{ product.title }}">
                   {% endif %}
                 </div>
                 <div class="card-info-box">
-                  <h5>{{ post.title }}</h5>
-                  <p class="bold">{{ post.price |intcomma}}원</p>
-                  <p>{{ post.location }}</p>
+                  <h5>{{ product.title }}</h5>
+                  <p class="bold">{{ product.sell_price |intcomma}}원</p>
+                  <p>{{ product.activity_area.emd_area_ids }}</p>
                   <div class="flex-box">
                     <p>조회
-                      {{ post.view_num }}</p>
+                      {{ product.view_count }}</p>
                     <p>·</p>
                     <p>채팅
-                      {{ post.chat_num }}</p>
+                      {{ product.chatroom.count }}</p>
                   </div>
                 </div>
               </a>
