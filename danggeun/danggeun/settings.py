@@ -77,6 +77,7 @@ WSGI_APPLICATION = 'danggeun.wsgi.application'
 
 with open('config.json', 'r') as f:
     json_data = json.load(f)
+    db_key = json_data['POSTGRESQL_KEY']
     secret_key = json_data['SECRET_KEY']
     
 SECRET_KEY = secret_key
@@ -85,6 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "danggeun",
         'USER': "postgres",
+        "PASSWORD" : db_key,
         "HOST" : "oreumi-dangun.cyxsnajbfbeu.ap-northeast-2.rds.amazonaws.com",
         "PORT": "5432",
 
