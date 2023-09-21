@@ -13,14 +13,14 @@
   </head>
 
   <body>
-    {% include 'dangun_app/nav.html' %}
+    {% include 'nav.html' %}
     <div class="content-box">
       <div class="container">
 
         {% block content %}
           <div class="about-trade">
             <div class="container">
-              <form class="write-box" method="POST" action="{% if post %}{% url 'dangun_app:edit' post.id %}{% else %}{% url 'dangun_app:create_form' %}{% endif %}" enctype="multipart/form-data">
+              <form class="write-box" method="POST" action="{% if post %}{% url 'market:edit' post.id %}{% else %}{% url 'market:create_form' %}{% endif %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="flex-box">
                   <label class="img-upload">

@@ -15,7 +15,7 @@
   </head>
 
   <body>
-    {% include 'dangun_app/nav.html' %}
+    {% include 'nav.html' %}
     <div class="content-box">
       <div class="container column">
         <div class="post-box">
@@ -28,14 +28,14 @@
               </div>
               {% if request.user.username == post.user.username %}
                 <div class="flex-box button-box">
-                  <a href="{% url 'dangun_app:edit' post.id %}">
+                  <a href="{% url 'market:edit' post.id %}">
                     <button class="grey">수정하기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
               {% else %}
                 <div class="button-box">
-                  <a href="{% url 'dangun_app:chat' %}">
+                  <a href="{% url 'market:chat' %}">
                     <button class="orange">채팅하기</button>
                   </a>
                 </div>
@@ -60,7 +60,7 @@
         </div>
       </div>
     </div>
-    {% include 'dangun_app/footer.html' %}
+    {% include 'footer.html' %}
 
   </body>
 

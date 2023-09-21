@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mt(ky3l2!ri2fnp(^#x2zef@6-ocr5oiff#i-h55@tywejghnx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'market'
 ]
 
@@ -74,13 +75,23 @@ WSGI_APPLICATION = 'danggeun.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+with open('config.json', 'r') as f:
+    json_data = json.load(f)
+    db_key = json_data['POSTGRESQL_KEY']
+    secret_key = json_data['SECRET_KEY']
+    
+SECRET_KEY = secret_key
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "danggeun",
+        'USER': "postgres",
+        "PASSWORD" : db_key,
+        "HOST" : "oreumi-dangun.cyxsnajbfbeu.ap-northeast-2.rds.amazonaws.com",
+        "PORT": "5432",
+
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

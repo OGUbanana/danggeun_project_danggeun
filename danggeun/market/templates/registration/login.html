@@ -15,7 +15,7 @@
   </head>
 
   <body class="back-ye">
-    {% include 'dangun_app/nav.html' %}
+    {% include 'nav.html' %}
     <div class="container">
       {% block content %}
         <div class="login-container">
@@ -26,7 +26,7 @@
           </form>
           <p class="register-reco">
             당근마켓 회원이 아니신가요?
-            <a href="{% url 'dangun_app:register' %}" class="bold">회원가입</a>
+            <a href="{% url 'market:register' %}" class="bold">회원가입</a>
           </p>
         </div>
       {% endblock %}
