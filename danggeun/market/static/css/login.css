@@ -1,4 +1,4 @@
-.login-container{
+.login-container {
     width: 440px;
     min-height: 100dvh;
     display: flex;
@@ -7,8 +7,7 @@
     margin: auto;
 }
 
-
-.login-input{
+.login-input {
     width: -webkit-fill-available;
     background-color: #fff;
     border: 1px solid #fa6616;
@@ -16,19 +15,17 @@
     padding: 13px;
 }
 
-.login-form{
+.login-form {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 1.5em;
 }
 
-.login-form label{
+.login-form label {
     display: block;
-    margin-bottom:12px
 }
 
-
-.login-button{
+.login-button {
     width: 100%;
     background-color: #fa6616;
     border-radius: 100px;
@@ -37,25 +34,25 @@
     color: #fff;
     font-size: 16px;
     font-weight: 700;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.register-reco{
+.register-reco {
     display: flex;
     flex-direction: column;
 }
 
-button:hover{
+button:hover {
     background-color: #ff823f;
 }
 
-.register-reco{
+.register-reco {
     align-items: center;
     gap: 8px;
     margin-top: 24px;
 }
 
-.register-reco a{
+.register-reco a {
     text-decoration: none;
     color: #ff823f;
     cursor: pointer;
