@@ -1,7 +1,13 @@
-from django.shortcuts import render,redirect
-from django.contrib.auth import authenticate, login
+
 from .models import Product, ActivityArea
-from .forms import CustomUserForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout, authenticate, login
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from .forms import CustomAuthForm, CustomUserForm
+from django.contrib.auth.models import User
+
 
 def main(request):
     return render(request, 'main.html')
@@ -12,34 +18,39 @@ def search(request):
 def chat(request):
     return render(request, 'chat.html')
 
-# def login(request):
-#     form = CustomAuthForm(data=request.POST or None)
-#     if request.method == "POST":
-#         if form.is_valid():
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             user = authenticate(request, username=username, password=password)
-#             if user is not None:
-#                 login(request, user)
-#                 return redirect('market:index')
-#     return render(request, 'registration/login.html', {'form': form})
+def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('main')
+    else:
+        form = CustomAuthForm(data=request.POST or None)
+        if request.method == "POST":
+            if form.is_valid():
+                user_id = form.cleaned_data['username']
+                user_pwd = form.cleaned_data['password']
+                user = authenticate(request, username=user_id, password=user_pwd)
+                if user is not None:
+                    login(request, user)
+                    return redirect('market:main')
+        return render(request, 'registration/login.html', {"form": form})
 
+def user_logout(request):
+    logout(request)
+    return render(request, 'main.html')
 
-# def logout(request):
-#     return render(request, 'registration/logout.html')
-def signup(request):
+def register(request):
     if request.method == "POST":
         form = CustomUserForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
+
+            user_id = form.cleaned_data['username']
+            user_pwd = form.cleaned_data['password']
+            user = authenticate(request, username=user_id, password=user_pwd)
             login(request, user)
             return redirect('market:main')
     else:
         form = CustomUserForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {"form": form})
 
 def trade(request):
     products = Product.objects.all().order_by('-created_at')
@@ -59,6 +70,5 @@ def location(request):
 def trade_post(request,product_id):
     products = Product.objects.get(pk=product_id)
     return render(request, 'trade_post.html')
-
 def write(request):
     return render(request, 'write.html')
