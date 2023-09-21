@@ -1,3 +1,5 @@
+
+from .models import Product, ActivityArea
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -5,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from .forms import CustomAuthForm, CustomUserForm
 from django.contrib.auth.models import User
+
 
 def main(request):
     return render(request, 'main.html')
@@ -50,13 +53,22 @@ def register(request):
     return render(request, 'registration/register.html', {"form": form})
 
 def trade(request):
-    return render(request, 'trade.html')
+    products = Product.objects.all().order_by('-created_at')
+
+    for product in products:
+        product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
+
+    context = {
+        'products' : products
+    }
+    
+    return render(request, 'trade.html', context)
 
 def location(request):
     return render(request, 'location.html')
 
-def trade_post(request):
+def trade_post(request,product_id):
+    products = Product.objects.get(pk=product_id)
     return render(request, 'trade_post.html')
-
 def write(request):
     return render(request, 'write.html')
