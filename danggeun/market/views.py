@@ -72,3 +72,12 @@ def trade_post(request,product_id):
     return render(request, 'trade_post.html')
 def write(request):
     return render(request, 'write.html')
+
+def set_region(request):
+    if request.method == 'POST':
+        region = request.POST.get('region-setting')
+        context = {
+            'region': region,
+        }
+        return render(request, 'location.html', context)
+    return render(request, 'location.html')
