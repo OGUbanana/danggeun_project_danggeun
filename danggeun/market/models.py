@@ -14,7 +14,7 @@ class UserProfile(models.Model):
 # 상품
 class Product(models.Model):
     product_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, to_field='username')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, db_index=True)
     status = models.CharField(max_length=10)
     product_image = models.ImageField(upload_to='product_images/')  
