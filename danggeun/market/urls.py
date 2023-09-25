@@ -16,6 +16,7 @@ urlpatterns = [
     path('location/', views.location, name='location'),
     path('trade_post/<int:product_id>', views.trade_post, name='trade_post'),
     path('set_region/', views.set_region, name='set_region'),
+    path('set_region_certification/', views.set_region_certification, name='set_region_certification'),
     path('write/', views.write, name='write'),
 
 ]
