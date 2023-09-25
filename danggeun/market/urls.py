@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .forms import CustomUserForm, CustomAuthForm
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 app_name = 'market'
 
@@ -18,10 +20,12 @@ urlpatterns = [
     path('set_region/', views.set_region, name='set_region'),
     path('set_region_certification/', views.set_region_certification, name='set_region_certification'),
     path('write/', views.write, name='write'),
-    path('edit/<int:id>/', views.edit, name='edit'),
-    path('create_form/', views.create_post, name='create_form'),
+    path('edit/<int:product_id>/', views.edit, name='edit'),
+    path('create_form/', views.create_form, name='create_form'),
+
     path('alert/<str:alert_message>/', views.alert, name='alert'),
     
     # 끌어올리기
     path('pull_up/<int:product_id>', views.pull_up, name='pull_up'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

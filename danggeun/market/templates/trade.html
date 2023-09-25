@@ -44,14 +44,14 @@
             <div class="card-box">
               <a href="{% url 'market:trade_post' product.pk %}" class="trade-text-link">
                 <div class="card-img">
-                  {% if product.images %}
-                    <img src="{{ product.images.url }}" alt="{{ product.title }}">
+                  {% if product.product_image %}
+                    <img src="{{ product.product_image.url }}" alt="{{ product.title }}">
                   {% endif %}
                 </div>
                 <div class="card-info-box">
                   <h5>{{ product.title }}</h5>
                   <p class="bold">{{ product.sell_price |intcomma}}원</p>
-                  <p>{{ product.activity_area.emd_area_ids }}</p>
+                  <p>{{ product.location }}</p>
                   <div class="flex-box">
                     <p>조회
                       {{ product.view_count }}</p>

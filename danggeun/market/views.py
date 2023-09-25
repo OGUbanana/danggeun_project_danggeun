@@ -10,6 +10,7 @@ from .forms import CustomAuthForm, CustomUserForm, PostForm
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
+from django.db.models import Q
 
 
 def main(request):
@@ -63,17 +64,14 @@ def register(request):
             
                 return redirect('market:login')
             else:
-                form.add_error('password2', 'Passwords do not match')
+                form.add_error('password2', '비밀번호가 일치하지 않습니다')
     else:
         form = CustomUserForm()
     
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.all().order_by('-refreshed_at', '-created_at')
-
-    for product in products:
-        product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
+    products = Product.objects.filter(status='N').order_by('-refreshed_at', '-created_at')
 
     context = {
         'products' : products
@@ -85,19 +83,32 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
-    product = Product.objects.get(pk=product_id)
-    seller_info = get_object_or_404(User, id=product.user_id)
+    product = get_object_or_404(Product, pk=product_id)
 
-    data = {
+    if request.user.is_authenticated:
+        if request.user != product.user:
+            product.view_count += 1
+            product.save()
+    else:
+        product.view_count += 1
+        product.save()
+
+    try:
+        user_profile = UserProfile.objects.get(user=product.user)
+    except UserProfile.DoesNotExist:
+            user_profile = None
+
+    context = {
         'product': product,
-        'seller_info': seller_info,
+        'user_profile': user_profile,
     }
-    return render(request, 'trade_post.html', data)
+    return render(request, 'trade_post.html',context)
+
 
 def alert(request, alert_message):
     return render(request, 'alert.html', {'alert_message': alert_message})
 
-# 거래글쓰기 화면
+
 @login_required
 def write(request):
     try:
@@ -106,37 +117,46 @@ def write(request):
         if user_profile.is_authenticated == 'Y':
             return render(request, 'write.html')
         else:
-            return redirect('market:alert', alert_message='동네인증이 필요합니다.')
+            return redirect('market:alert', alert_message='동네인증을 해주세요!!')
     except UserProfile.DoesNotExist:
-        return redirect('market:alert', alert_message='동네인증이 필요합니다.')
+        return redirect('market:alert', alert_message='동네인증을 해주세요!!')
 
-# 거래글수정 화면
+
 def edit(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
+
     if product:
         product.description = product.description.strip()
+
     if request.method == "POST":
-        product.title = request.POST['title']
-        product.price = request.POST['price']
-        product.description = request.POST['description']
-        product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
-        product.activity_area = request.POST['location']
-        if 'images' in request.FILES:
-            product.images = request.FILES['images']
-        product.save()
-        return redirect('market:trade_post', pk=product_id)
+        action = request.POST.get('action')
+        if action == 'edit':
+            product.title = request.POST['title']
+            product.sell_price = request.POST['sell_price']
+            product.description = request.POST['description']
+            product.location = request.POST['location']
+            if 'product_image' in request.FILES:
+                product.product_image = request.FILES['product_image']
+            product.save()
+            return redirect('market:trade_post', product_id=product.pk)
+        elif action == 'delete':
+            product.delete()
+            return redirect('market:trade')
 
     return render(request, 'write.html', {'product': product})
 
 @login_required
-def create_post(request):
+def create_form(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
-            product.user_id = request.user.id  # 작성자 정보 추가
-            product.save()  # 최종 저장
-            return redirect('marekt:trade_post', pk=product.pk)  # 저장 후 상세 페이지로 이동
+            product.user = request.user
+            product.save()
+            return redirect('market:trade_post', product_id=product.pk)
+        if not form.is_valid():
+            print(form.errors)
+
     else:
         form = PostForm()
     return render(request, 'trade_post.html', {'form': form})
@@ -167,7 +187,6 @@ def set_region_certification(request):
 
 # 끌어올리기
 def pull_up(request, product_id) :
-
     username = request.user.username
     product = get_object_or_404(Product, pk=product_id)
     user_info = User.objects.filter(username=username)
@@ -176,5 +195,15 @@ def pull_up(request, product_id) :
     if(product.user_id == user_id) :
         product.refreshed_at = tz.now();
         product.save()
-
         return redirect('market:trade')
+
+def search(request):
+    query = request.GET.get('search')
+    if query:
+        results = Product.objects.filter(Q(title__icontains=query) | Q(location__icontains=query))
+    else:
+        results = Product.objects.all()
+    return render(request, 'search.html', {'products': results})
+
+
+        

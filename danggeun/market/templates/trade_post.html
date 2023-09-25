@@ -22,15 +22,15 @@ trade_post.html
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ product.product_img }}" alt="{{ product.title }}" class="block-box">
+            <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="block-box">
             <div class="flex-box between info-button-box">
               <div class="user-info">
-                <h6>{{ seller_info.username }}</h6>
+                <h6>{{ product.user }}</h6>
                 <p>{{ product.location }}</p>
               </div>
-              {% if request.user.username == seller_info.username %}
+              {% if request.user.username == product.user.username %}
                 <div class="flex-box button-box">
-                  <a href="{% url 'market:edit' product.product_id %}">
+                  <a href="{% url 'market:edit' product.pk %}">
                     <button class="grey">수정하기</button>
                   </a>
                   <a href="{% url 'market:pull_up' product.product_id%}">
@@ -49,16 +49,16 @@ trade_post.html
             <hr class="line">
             <div class="post-info-box">
               <div class="flex-box between">
-                <h3>{{ post.title }}</h3>
-                <h3>{{ post.price |intcomma}}
+                <h3>{{ product.title }}</h3>
+                <h3>{{ product.sell_price |intcomma}}
                   원</h3>
               </div>
-              <p>{{ post.description }}</p>
+              <p>{{ product.description }}</p>
               <div class="location-views-box flex-box between">
                 <p>희망 거래장소 |
-                  {{ post.location }}</p>
+                  {{ product.location }}</p>
                 <p>조회수
-                  {{ post.view_num }}</p>
+                  {{ product.view_count }}</p>
               </div>
             </div>
           {% endblock %}
