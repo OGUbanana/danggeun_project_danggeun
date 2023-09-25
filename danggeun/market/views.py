@@ -69,10 +69,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.all().order_by('-created_at')
-
-    for product in products:
-        product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
+    products = Product.objects.filter(status='N').order_by('-view_count')
 
     context = {
         'products' : products
@@ -84,8 +81,28 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
-    products = Product.objects.get(pk=product_id)
-    return render(request, 'trade_post.html')
+
+    product = get_object_or_404(Product, pk=product_id)
+
+    if request.user.is_authenticated:
+        if request.user != product.user:
+            product.view_count += 1
+            product.save()
+    else:
+        product.view_count += 1
+        product.save()
+
+    try:
+        user_profile = UserProfile.objects.get(user=product.user)
+    except UserProfile.DoesNotExist:
+            user_profile = None
+
+    context = {
+        'product': product,
+        'user_profile': user_profile,
+    }
+    return render(request, 'trade_post.html',context)
+
 
 
 def alert(request, alert_message):
@@ -111,26 +128,30 @@ def edit(request, product_id):
         product.description = product.description.strip()
     if request.method == "POST":
         product.title = request.POST['title']
-        product.price = request.POST['price']
+        product.sell_price = request.POST['sell_price']
         product.description = request.POST['description']
-        product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
-        product.activity_area = request.POST['location']
-        if 'images' in request.FILES:
-            product.images = request.FILES['images']
+        product.location = request.POST['location']
+        if 'product_image' in request.FILES:
+            product.product_image = request.FILES['product_image']
         product.save()
-        return redirect('market:trade_post', pk=product_id)
+        return redirect('market:trade_post', product_id=product.pk)
+
 
     return render(request, 'write.html', {'product': product})
 
 @login_required
-def create_post(request):
+def create_form(request):
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
-            product.user_id = request.user.id  # 작성자 정보 추가
-            product.save()  # 최종 저장
-            return redirect('marekt:trade_post', pk=product.pk)  # 저장 후 상세 페이지로 이동
+            product.user = request.user
+            product.save()
+            return redirect('market:trade_post', product_id=product.pk)
+        if not form.is_valid():
+            print(form.errors)
+
     else:
         form = PostForm()
     return render(request, 'trade_post.html', {'form': form})

@@ -18,8 +18,9 @@ urlpatterns = [
     path('set_region/', views.set_region, name='set_region'),
     path('set_region_certification/', views.set_region_certification, name='set_region_certification'),
     path('write/', views.write, name='write'),
-    path('edit/<int:id>/', views.edit, name='edit'),
-    path('create_form/', views.create_post, name='create_form'),
+    path('edit/<int:product_id>/', views.edit, name='edit'),
+    path('create_form/', views.create_form, name='create_form'),
+
     path('alert/<str:alert_message>/', views.alert, name='alert'),
 
 ]
