@@ -1,20 +1,20 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 
 # Create your models here.
-# class User(models.Model):
-#     user_id = models.AutoField(primary_key=True)
-#     user_pwd = models.CharField(max_length=255)
-#     user_name = models.CharField(max_length=10)
-#     user_authority = models.BooleanField(default=False)
-    
-#     class Meta:
-#         db_table = 'user'
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    region = models.CharField(max_length=100, null=True)
+    is_authenticated = models.CharField(max_length=1, default='N')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
 # 상품
 class Product(models.Model):
     product_id = models.BigAutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, to_field='username')
     title = models.CharField(max_length=100, db_index=True)
     status = models.CharField(max_length=10)
     product_image = models.ImageField(upload_to='product_images/')  
@@ -53,7 +53,7 @@ class ChatMessage(models.Model):
 class ChatRoom(models.Model):
     id = models.BigAutoField(primary_key=True)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='chatroom')
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     created_at = models.DateTimeField()
 
     class Meta:
