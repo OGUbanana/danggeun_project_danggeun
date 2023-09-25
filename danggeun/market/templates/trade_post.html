@@ -1,3 +1,5 @@
+trade_post.html
+
 {% load static%}{% load humanize %}
 
 <!DOCTYPE html>
@@ -20,16 +22,19 @@
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ post.images.url }}" alt="{{ post.title }}" class="block-box">
+            <img src="{{ product.product_img }}" alt="{{ product.title }}" class="block-box">
             <div class="flex-box between info-button-box">
               <div class="user-info">
-                <h6>{{ post.user }}</h6>
-                <p>{{ post.location }}</p>
+                <h6>{{ seller_info.username }}</h6>
+                <p>{{ product.location }}</p>
               </div>
-              {% if request.user.username == post.user.username %}
+              {% if request.user.username == seller_info.username %}
                 <div class="flex-box button-box">
-                  <a href="{% url 'market:edit' post.id %}">
+                  <a href="{% url 'market:edit' product.product_id %}">
                     <button class="grey">수정하기</button>
+                  </a>
+                  <a href="{% url 'market:pull_up' product.product_id%}">
+                    <button class="orange">끌어올리기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>

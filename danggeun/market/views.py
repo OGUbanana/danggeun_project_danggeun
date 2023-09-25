@@ -9,6 +9,7 @@ from django.conf import settings
 from .forms import CustomAuthForm, CustomUserForm, PostForm
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone as tz
 
 
 def main(request):
@@ -69,7 +70,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.all().order_by('-created_at')
+    products = Product.objects.all().order_by('-refreshed_at', '-created_at')
 
     for product in products:
         product.activity_area = ActivityArea.objects.get(user_id=product.user_id)
@@ -84,9 +85,14 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
-    products = Product.objects.get(pk=product_id)
-    return render(request, 'trade_post.html')
+    product = Product.objects.get(pk=product_id)
+    seller_info = get_object_or_404(User, id=product.user_id)
 
+    data = {
+        'product': product,
+        'seller_info': seller_info,
+    }
+    return render(request, 'trade_post.html', data)
 
 def alert(request, alert_message):
     return render(request, 'alert.html', {'alert_message': alert_message})
@@ -159,6 +165,16 @@ def set_region(request):
 def set_region_certification(request):
     return render(request, 'main.html')
 
+# 끌어올리기
+def pull_up(request, product_id) :
 
+    username = request.user.username
+    product = get_object_or_404(Product, pk=product_id)
+    user_info = User.objects.filter(username=username)
+    user_id = user_info.user_id
 
+    if(product.user_id == user_id) :
+        product.refreshed_at = tz.now();
+        product.save()
 
+        return redirect('market:trade')
