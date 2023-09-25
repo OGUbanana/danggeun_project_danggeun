@@ -63,7 +63,7 @@ class ChatRoom(models.Model):
 class ActivityArea(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     distance_meters = models.SmallIntegerField()
-    emd_area_ids = models.IntegerField(db_index=True, )
+    emd_area_ids = models.CharField(max_length=100)
     authenticated_at = models.DateTimeField(null=True)
 
     class Meta:
