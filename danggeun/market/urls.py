@@ -11,7 +11,7 @@ urlpatterns = [
     path('', views.main, name="main"),
     path('search/', views.search, name='search'),
     path('login/', views.user_login, name='login'),
-     path('logout/', views.user_logout, name='logout'),
+    path('logout/', views.user_logout, name='logout'),
     path('chat/', views.chat, name='chat'),
     path('trade/', views.trade, name='trade'),
     path('register/', views.register, name='register'),
@@ -24,5 +24,8 @@ urlpatterns = [
     path('create_form/', views.create_form, name='create_form'),
 
     path('alert/<str:alert_message>/', views.alert, name='alert'),
-
+    
+    # 끌어올리기
+    path('pull_up/<int:product_id>', views.pull_up, name='pull_up'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

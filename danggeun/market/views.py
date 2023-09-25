@@ -9,6 +9,7 @@ from django.conf import settings
 from .forms import CustomAuthForm, CustomUserForm, PostForm
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone as tz
 from django.db.models import Q
 
 
@@ -70,7 +71,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.filter(status='N').order_by('-view_count')
+    products = Product.objects.filter(status='N').order_by('-refreshed_at', '-created_at')
 
     context = {
         'products' : products
@@ -82,7 +83,6 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
-
     product = get_object_or_404(Product, pk=product_id)
 
     if request.user.is_authenticated:
@@ -103,7 +103,6 @@ def trade_post(request,product_id):
         'user_profile': user_profile,
     }
     return render(request, 'trade_post.html',context)
-
 
 
 def alert(request, alert_message):
@@ -186,6 +185,17 @@ def set_region(request):
 def set_region_certification(request):
     return render(request, 'main.html')
 
+# 끌어올리기
+def pull_up(request, product_id) :
+    username = request.user.username
+    product = get_object_or_404(Product, pk=product_id)
+    user_info = User.objects.filter(username=username)
+    user_id = user_info.user_id
+
+    if(product.user_id == user_id) :
+        product.refreshed_at = tz.now();
+        product.save()
+        return redirect('market:trade')
 
 def search(request):
     query = request.GET.get('search')
@@ -195,3 +205,5 @@ def search(request):
         results = Product.objects.all()
     return render(request, 'search.html', {'products': results})
 
+
+        

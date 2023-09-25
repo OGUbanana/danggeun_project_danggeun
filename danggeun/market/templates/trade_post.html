@@ -1,3 +1,5 @@
+trade_post.html
+
 {% load static%}{% load humanize %}
 
 <!DOCTYPE html>
@@ -30,6 +32,9 @@
                 <div class="flex-box button-box">
                   <a href="{% url 'market:edit' product.pk %}">
                     <button class="grey">수정하기</button>
+                  </a>
+                  <a href="{% url 'market:pull_up' product.product_id%}">
+                    <button class="orange">끌어올리기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
