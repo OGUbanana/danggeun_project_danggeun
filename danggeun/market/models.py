@@ -14,12 +14,13 @@ class UserProfile(models.Model):
 # 상품
 class Product(models.Model):
     product_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, to_field='username')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, db_index=True)
-    status = models.CharField(max_length=10)
+    status = models.CharField(max_length=10, default='N')
     product_image = models.ImageField(upload_to='product_images/')  
+    location = models.CharField(max_length=100)
     sell_price = models.IntegerField(null=True)
-    view_count = models.IntegerField()
+    view_count = models.IntegerField(default=0)
     description = models.TextField()
     refreshed_at = models.DateTimeField(db_index=True, auto_now=True)
     created_at = models.DateTimeField(auto_now=True)

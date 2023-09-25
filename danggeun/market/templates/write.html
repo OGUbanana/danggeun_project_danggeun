@@ -20,36 +20,37 @@
         {% block content %}
           <div class="about-trade">
             <div class="container">
-              <form class="write-box" method="POST" action="{% if post %}{% url 'market:edit' post.id %}{% else %}{% url 'market:create_form' %}{% endif %}" enctype="multipart/form-data">
+              <form class="write-box" method="POST" action="{% if product %}{% url 'market:edit' product.pk %}{% else %}{% url 'market:create_form' %}{% endif %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="flex-box">
                   <label class="img-upload">
-                    <img src="{% if post %}{{ post.images.url }}{% else %}{% static 'img/icon_photo.png' %}{% endif %}" alt="이미지 설명" id="imagePreview">
-                    <input type="file" name="images" accept="image/*" style="display: none;" onchange="previewImage(event);">
+                    <img src="{% if product %}{{ product.product_image.url }}{% else %}{% static 'img/icon_photo.png' %}{% endif %}" alt="이미지 설명" id="imagePreview">
+                    <input type="file" name="product_image" accept="image/*" style="display: none;" onchange="previewImage(event);">
                   </label>
                   <div>
                     <div class="flex-box column baseline title-box">
                       <label for="title">글 제목</label>
-                      <input type="text" name="title" placeholder="글 제목" required="required" value="{% if post %}{{ post.title }}{% endif %}">
+                      <input type="text" name="title" placeholder="글 제목" required="required" value="{% if product %}{{ product.title }}{% endif %}">
                       <label for=" price">가격</label>
-                      <input type="text" name="price" placeholder="가격" required="required" value="{% if post %}{{ post.price }}{% endif %}">
+                      <input type="text" name="sell_price" placeholder="가격" required="required" value="{% if product %}{{ product.sell_price }}{% endif %}">
                     </div>
                   </div>
                 </div>
                 <div class="full-box">
                   <label for="description" class="block-box">물품 설명</label>
                   <textarea name="description" required="required">
-                    {% if post %}{{ post.description }}
+                    {% if product %}
+                    {{ product.description }}
                     {% endif %}
                   </textarea>
 
                 </div>
                 <div class="full-box">
                   <label for="location" class="block-box">거래 희망 장소</label>
-                  <input type="text" name="location" placeholder="거래를 희망하는 장소" required="required" value="{% if post %}{{ post.location }}{% endif %}">
+                  <input type="text" name="location" placeholder="거래를 희망하는 장소" required="required" value="{% if product %}{{ product.location }}{% endif %}">
                 </div>
                 <div class="submit-button-box">
-                  {% if post %}
+                  {% if product %}
                     <button type="submit">수정하기</button>
                   {% else %}
                     <button type="submit">전송</button>
