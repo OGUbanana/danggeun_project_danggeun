@@ -81,6 +81,7 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
+
     product = get_object_or_404(Product, pk=product_id)
 
     if request.user.is_authenticated:
@@ -101,6 +102,7 @@ def trade_post(request,product_id):
         'user_profile': user_profile,
     }
     return render(request, 'trade_post.html',context)
+
 
 
 def alert(request, alert_message):
@@ -134,10 +136,12 @@ def edit(request, product_id):
         product.save()
         return redirect('market:trade_post', product_id=product.pk)
 
+
     return render(request, 'write.html', {'product': product})
 
 @login_required
 def create_form(request):
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -147,6 +151,7 @@ def create_form(request):
             return redirect('market:trade_post', product_id=product.pk)
         if not form.is_valid():
             print(form.errors)
+
     else:
         form = PostForm()
     return render(request, 'trade_post.html', {'form': form})

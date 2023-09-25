@@ -73,3 +73,4 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['title', 'product_image','location','sell_price', 'description']
+
