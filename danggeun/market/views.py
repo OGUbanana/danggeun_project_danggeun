@@ -125,24 +125,29 @@ def write(request):
 
 def edit(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
+
     if product:
         product.description = product.description.strip()
-    if request.method == "POST":
-        product.title = request.POST['title']
-        product.sell_price = request.POST['sell_price']
-        product.description = request.POST['description']
-        product.location = request.POST['location']
-        if 'product_image' in request.FILES:
-            product.product_image = request.FILES['product_image']
-        product.save()
-        return redirect('market:trade_post', product_id=product.pk)
 
+    if request.method == "POST":
+        action = request.POST.get('action')
+        if action == 'edit':
+            product.title = request.POST['title']
+            product.sell_price = request.POST['sell_price']
+            product.description = request.POST['description']
+            product.location = request.POST['location']
+            if 'product_image' in request.FILES:
+                product.product_image = request.FILES['product_image']
+            product.save()
+            return redirect('market:trade_post', product_id=product.pk)
+        elif action == 'delete':
+            product.delete()
+            return redirect('market:trade')
 
     return render(request, 'write.html', {'product': product})
 
 @login_required
 def create_form(request):
-
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():

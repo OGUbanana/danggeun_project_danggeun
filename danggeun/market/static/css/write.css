@@ -47,10 +47,26 @@ label{
   padding: 0 0 0 20px;
 }
 
-.submit-button-box button{
+.submit-button-box{
+  display: flex;
+  gap: 50px;
+}
+
+
+.edit-button, .submit-button{
   width:-webkit-fill-available;
   margin-top: 40px;
   background-color: #fa6616;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 0;
+}
+.delete-button{
+  width:-webkit-fill-available;
+  margin-top: 40px;
+  background-color: #d13100;
   border: none;
   border-radius: 4px;
   color: #fff;
