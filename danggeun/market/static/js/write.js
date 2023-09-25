@@ -1,3 +1,12 @@
+document.querySelector(".submit-button").addEventListener("click", function(event){
+  let imageField = document.getElementById("productImage");
+
+  if(!imageField.value){
+      alert("이미지를 넣어주세요!");
+      event.preventDefault();
+  }
+});
+
 function previewImage(event) {
   let reader = new FileReader();
   reader.onload = function () {
@@ -7,3 +16,4 @@ function previewImage(event) {
   };
   reader.readAsDataURL(event.target.files[0]);
 }
+
