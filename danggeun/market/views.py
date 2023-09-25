@@ -9,6 +9,7 @@ from django.conf import settings
 from .forms import CustomAuthForm, CustomUserForm, PostForm
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 
 def main(request):
@@ -62,7 +63,7 @@ def register(request):
             
                 return redirect('market:login')
             else:
-                form.add_error('password2', 'Passwords do not match')
+                form.add_error('password2', '비밀번호가 일치하지 않습니다')
     else:
         form = CustomUserForm()
     
@@ -108,7 +109,7 @@ def trade_post(request,product_id):
 def alert(request, alert_message):
     return render(request, 'alert.html', {'alert_message': alert_message})
 
-# 거래글쓰기 화면
+
 @login_required
 def write(request):
     try:
@@ -117,11 +118,11 @@ def write(request):
         if user_profile.is_authenticated == 'Y':
             return render(request, 'write.html')
         else:
-            return redirect('market:alert', alert_message='동네인증이 필요합니다.')
+            return redirect('market:alert', alert_message='동네인증을 해주세요!!')
     except UserProfile.DoesNotExist:
-        return redirect('market:alert', alert_message='동네인증이 필요합니다.')
+        return redirect('market:alert', alert_message='동네인증을 해주세요!!')
 
-# 거래글수정 화면
+
 def edit(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     if product:
@@ -181,5 +182,11 @@ def set_region_certification(request):
     return render(request, 'main.html')
 
 
-
+def search(request):
+    query = request.GET.get('search')
+    if query:
+        results = Product.objects.filter(Q(title__icontains=query) | Q(location__icontains=query))
+    else:
+        results = Product.objects.all()
+    return render(request, 'search.html', {'products': results})
 
