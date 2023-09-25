@@ -1,4 +1,5 @@
 
+from django.utils import timezone 
 from .models import Product, ActivityArea, UserProfile
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
@@ -7,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from .forms import CustomAuthForm, CustomUserForm, PostForm
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+
 
 def main(request):
     return render(request, 'main.html')
@@ -149,11 +152,29 @@ def create_form(request):
     return render(request, 'trade_post.html', {'form': form})
 
 
+@login_required
 def set_region(request):
     if request.method == 'POST':
         region = request.POST.get('region-setting')
         context = {
             'region': region,
         }
+        if region:
+            user = request.user
+            try:
+                activity_area = ActivityArea.objects.get(user_id=user)
+            except ActivityArea.DoesNotExist:
+                activity_area = ActivityArea(user_id=user)
+            
+            activity_area.emd_area_name = region
+            activity_area.authenticated_at = timezone.now()
+            activity_area.save()
         return render(request, 'location.html', context)
     return render(request, 'location.html')
+
+def set_region_certification(request):
+    return render(request, 'main.html')
+
+
+
+

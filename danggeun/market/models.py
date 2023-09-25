@@ -63,9 +63,10 @@ class ChatRoom(models.Model):
 # 활동지역
 class ActivityArea(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    distance_meters = models.SmallIntegerField()
-    emd_area_ids = models.CharField(max_length=100)
+    # distance_meters = models.SmallIntegerField()
+    emd_area_name = models.CharField(max_length=255, db_index=True)
     authenticated_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = 'activity_areas'
+        
