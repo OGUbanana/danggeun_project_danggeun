@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.sites",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,8 +39,56 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'market'
+    "market",
+    # 구글 로그인을 위한 social_django 추가
+    "social_django",
+    # 카카오 로그인을 위한 앱 추가
+    
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.kakao",
 ]
+
+with open('config.json', 'r') as f:
+    json_data = json.load(f)
+    db_key = json_data['POSTGRESQL_KEY']
+    secret_key = json_data['SECRET_KEY']
+    google_social_key = json_data['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+    google_social_secret = json_data['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
+    naver_social_key = json_data['SOCIAL_AUTH_NAVER_KEY']
+    naver_social_secret = json_data['SOCIAL_AUTH_NAVER_SECRET']
+
+# 구글 로그인을 위한 API 키 및 REDIRECT_URI 작성
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (
+    google_social_key
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = google_social_secret
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://127.0.0.1:8000/complete/google-oauth2/"
+
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
+    'social_core.backends.naver.NaverOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+]
+      
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'social_core.backends.naver.NaverOAuth2',
+)
+
+# 네이버 소셜 로그인 설정
+SOCIAL_AUTH_NAVER_KEY = naver_social_key
+SOCIAL_AUTH_NAVER_SECRET = naver_social_secret
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "main"
+ACCOUNT_LOGOUT_REDIRECT_URL = 'main'
+
+# 카카오 소셜 로그인 설정
+SITE_ID = 2
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_ON_GET = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +98,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'danggeun.urls'
@@ -75,10 +125,7 @@ WSGI_APPLICATION = 'danggeun.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-with open('config.json', 'r') as f:
-    json_data = json.load(f)
-    db_key = json_data['POSTGRESQL_KEY']
-    secret_key = json_data['SECRET_KEY']
+
     
 SECRET_KEY = secret_key
 DATABASES = {

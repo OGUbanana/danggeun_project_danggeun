@@ -189,12 +189,13 @@ def set_region_certification(request):
 def pull_up(request, product_id) :
     username = request.user.username
     product = get_object_or_404(Product, pk=product_id)
-    user_info = User.objects.filter(username=username)
-    user_id = user_info.user_id
+    user_info = get_object_or_404(User, username=username)
+    user_id = user_info.id
 
     if(product.user_id == user_id) :
         product.refreshed_at = tz.now();
         product.save()
+
         return redirect('market:trade')
 
 def search(request):
@@ -204,6 +205,3 @@ def search(request):
     else:
         results = Product.objects.all()
     return render(request, 'search.html', {'products': results})
-
-
-        
