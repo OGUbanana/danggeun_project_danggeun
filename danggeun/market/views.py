@@ -182,8 +182,19 @@ def set_region(request):
         return render(request, 'location.html', context)
     return render(request, 'location.html')
 
+@login_required
 def set_region_certification(request):
+    if request.method == 'POST':
+        user = request.user
+        try:
+            userprofile = UserProfile.objects.get(user=user)
+            userprofile.is_authenticated = 'Y'
+            userprofile.save()
+        except UserProfile.DoesNotExist:
+            userprofile = UserProfile(user=user, is_authenticated='Y')
+            userprofile.save()
     return render(request, 'main.html')
+
 
 # 끌어올리기
 def pull_up(request, product_id) :
