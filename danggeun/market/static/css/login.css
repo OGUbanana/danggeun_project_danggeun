@@ -57,3 +57,23 @@ button:hover {
     color: #ff823f;
     cursor: pointer;
 }
+
+.social-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.social-btn {
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 20px 10px 20px 10px;
+}
+
+.social-btn:hover img {
+    /* background-color: #ff823f; */
+    transform: scale(1.2);
+    margin: 0;
+}
