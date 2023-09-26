@@ -89,10 +89,8 @@ DATABASES = {
         "PASSWORD" : db_key,
         "HOST" : "oreumi-dangun.cyxsnajbfbeu.ap-northeast-2.rds.amazonaws.com",
         "PORT": "5432",
-
     }
 }
-
 
 
 LOGIN_REDIRECT_URL = '/'
