@@ -22,10 +22,23 @@
                     <img id="userimg" src="{% static 'img/user.svg'%}" alt="">
                     <p>{{ user.username }}</p>
                 </div>
+                <div class='manner'>
+                  <div class='manner-info'>
+                    <p>매너온도</p>
+                    <div class="info">
+                      <p id="temperature">--°C</p>
+                      <img id="smileImage" src="" alt="Smile Image" />
+                    </div>
+                  </div>
+                  <div class="manner-container">
+                    <div class="manner-temp" id="mannerTemp"></div>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
     {% include 'footer.html' %}
+    <script src="{% static 'js/mypage.js' %}"></script>
     </body>
 
   </html>
