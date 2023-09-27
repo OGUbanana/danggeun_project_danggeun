@@ -42,7 +42,8 @@ h3{
     gap: 20px;
     padding: 0 0 0 120px;
     font-weight: 800;
-    font-size: larger;
+    font-size: xx-large;
+    margin: 65px 0 40px 0;
 }
 .width800{
     width: 800px;
@@ -75,6 +76,41 @@ h3{
     gap: 15px;
 }
 #userimg{
-    height: 40px;
-    width: 40px;
+    height: 50px;
+    width: 50px;
+}
+.manner{
+    display: flex;
+    flex-direction: column;
+    padding: 0 120px 0 120px;
+    gap: 10px;
+}
+.manner-info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.manner-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.manner-temp {
+    height: 100%;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    width: 0%;
+}
+.info{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+#smileImage{
+    width: 30px;
+    height: 30px;
 }
