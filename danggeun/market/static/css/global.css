@@ -13,7 +13,7 @@ button, a, link{
 
 
 .container{
-    width: 1200px;
+    width: 100%;
     display: flex;
     justify-content: center;
     margin: auto;

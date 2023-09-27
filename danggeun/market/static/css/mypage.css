@@ -1,0 +1,80 @@
+*{
+    font-family: 'Pretendard', sans-serif;
+}
+body{
+    background-color: #f8f9fa;
+}
+h3{
+    font-weight: 800;
+    font-size: larger;
+}
+.mydanggeun{
+    gap: 0px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+.first img{
+    width: 24px;
+    height: 24px;
+}
+.first, .second{
+    display: flex;
+    background-color: #f9f8f4;
+    height: 900px;
+    gap: 20px;
+    margin-top: 60px;
+    padding-top: 50px;
+    flex-direction: column;
+}
+.first{
+    width: 250px;
+    padding-left: 40px;
+}
+.second{
+    width: 100%;
+    padding: 30px;
+}
+.profile{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding: 0 0 0 120px;
+    font-weight: 800;
+    font-size: larger;
+}
+.width800{
+    width: 800px;
+}
+.user-info{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.mytrade{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 1px solid var(--gray500);
+    padding-top: 20px;
+    /* padding-left: 120px; */
+}
+.etc{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray500);
+    /* padding-left: 120px; */
+}
+
+.menulist{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+#userimg{
+    height: 40px;
+    width: 40px;
+}

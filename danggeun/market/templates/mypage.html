@@ -1,0 +1,31 @@
+{% load static %}{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mypage.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 당근</title>
+  </head>
+
+  <body class="back-ye">
+    {% include 'nav.html' %}
+    <div class="content-box">
+        <div class="mydanggeun container column center">
+            {% include 'mypagemenu.html' %}
+            <div class="second">
+                <div class="profile">
+                    <img id="userimg" src="{% static 'img/user.svg'%}" alt="">
+                    <p>{{ user.username }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+    </body>
+
+  </html>
