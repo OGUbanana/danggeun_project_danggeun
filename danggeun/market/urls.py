@@ -27,5 +27,11 @@ urlpatterns = [
     
     # 끌어올리기
     path('pull_up/<int:product_id>', views.pull_up, name='pull_up'),
+
+    path('mypage/',views.mypage, name='mypage'),
+    path('my_list/', views.my_list, name='my_list'),
+    path('buy_list/', views.buy_list, name='buy_list'),
+    path('wish_list/', views.wish_list, name='wish_list')
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -13,6 +13,12 @@ nav{
     padding: 14px 0;
 }
 
+a{
+    text-decoration: none;
+    color: black; 
+}
+a:visited { text-decoration: none; }
+
 .logo{
     margin-right: 68px;
 }
@@ -27,7 +33,6 @@ nav{
     border: none;
     background-color: transparent;
     font-weight: 700;
-
 }
 
 .ghost-button{
@@ -51,5 +56,77 @@ input{
 
 .orange-text{
     color: #fa6616;
-    
+}
+
+.user {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    height: 35px;
+    padding: 0px 12px;
+    align-items: center;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    gap: 10px;
+}
+
+
+.user:hover{
+    background: var(--gray200) radial-gradient(circle,transparent 1%,var(--gray200) 1%) center/15000%;
+    transition: background-color .6s,background-size .6s;
+}
+.user.selected{
+    background-color: var(--gray200);
+}
+#menu-container{
+    position: absolute;
+    top: 48px;
+    right: 10px;
+    width: 220px;
+    border: 1px solid var(--gray700);
+    border-radius: 6px;
+    background: var(--gray50);
+    will-change: opacity;
+    animation: 0.3s ease-in 0s 1 normal none running fadeIn;
+}
+.mypage, .logout{
+    color: black;
+    padding: 10px;
+}
+.mypage a:hover, .logout a:hover{
+    background: var(--gray200) radial-gradient(circle,transparent 1%,var(--gray200) 1%) center/15000%;
+    transition: background-color .6s,background-size .6s;
+    border-radius: 6px;
+}
+.logout{
+    border-top: 1px solid rgb(233, 233, 233);
+}
+.mypage a, .logout a{
+    padding: 5px 60px 5px 60px;
+}
+.arrow-down{
+    height: 20px;
+    width: 10px;
+}
+.flip{
+    transform: rotate(180deg);
+}
+:root {
+    --gray200: #eaebee;
+    --gray300: #dcdee3;
+    --gray500: #adb1ba;
+    --gray700: #4d5159;
+    --gray50: #f7f8fa;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

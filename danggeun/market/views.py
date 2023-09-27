@@ -16,6 +16,7 @@ from django.db.models import Q
 def main(request):
     return render(request, 'main.html')
 
+
 def search(request):
     return render(request, 'search.html')
 
@@ -216,3 +217,39 @@ def search(request):
     else:
         results = Product.objects.all()
     return render(request, 'search.html', {'products': results})
+
+
+@login_required
+def mypage(request):
+    return render(request, 'mypage.html')
+
+@login_required
+def my_list(request):
+    products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
+
+
+    context = {
+        'products' : products
+    }
+    
+    return render(request, 'my_list.html', context)
+
+@login_required
+def buy_list(request):
+    # products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
+
+    # context = {
+    #     'products' : products
+    # }
+    return render(request, 'my_list.html')
+
+@login_required
+def wish_list(request):
+    # products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
+
+
+    # context = {
+    #     'products' : products
+    # }
+    
+    return render(request, 'my_list.html')
