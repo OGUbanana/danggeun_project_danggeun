@@ -21,24 +21,24 @@
             <div class="second">
                 <div class="full-box trade-box column">
                     <div class="flex-box full-box card-container between">
-                      {% for product in products %}
+                      {% for item in wish_list %}
                         <div class="card-box">
-                          <a href="{% url 'market:trade_post' product.pk %}" class="trade-text-link">
+                          <a href="{% url 'market:trade_post' item.product_id %}" class="trade-text-link">
                             <div class="card-img">
-                              {% if product.product_image %}
-                                <img src="{{ product.product_image.url }}" alt="{{ product.title }}">
+                              {% if item.product_image %}
+                                <img src="{{ item.product_image.url }}" alt="{{ item.title }}">
                               {% endif %}
                             </div>
                             <div class="card-info-box">
-                              <h5>{{ product.title }}</h5>
-                              <p class="bold">{{ product.sell_price |intcomma}}원</p>
-                              <p>{{ product.location }}</p>
+                              <h5>{{ item.title }}</h5>
+                              <p class="bold">{{ item.sell_price |intcomma}}원</p>
+                              <p>{{ item.location }}</p>
                               <div class="flex-box">
                                 <p>조회
-                                  {{ product.view_count }}</p>
+                                  {{ item.view_count }}</p>
                                 <p>·</p>
                                 <p>채팅
-                                  {{ product.chatroom.count }}</p>
+                                  {{ item.chatroom.count }}</p>
                               </div>
                             </div>
                           </a>

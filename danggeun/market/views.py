@@ -1,6 +1,6 @@
 
 from django.utils import timezone 
-from .models import Product, ActivityArea, UserProfile
+from .models import Product, ActivityArea, UserProfile, WishList
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
 from django.db.models import Q
-
+from django.http import HttpResponse
 
 def main(request):
     return render(request, 'main.html')
@@ -84,8 +84,9 @@ def location(request):
     return render(request, 'location.html')
 
 def trade_post(request,product_id):
+    
     product = get_object_or_404(Product, pk=product_id)
-
+    
     if request.user.is_authenticated:
         if request.user != product.user:
             product.view_count += 1
@@ -99,10 +100,31 @@ def trade_post(request,product_id):
     except UserProfile.DoesNotExist:
             user_profile = None
 
-    context = {
+    try:
+        username = request.user.username
+        user = User.objects.get(username=username)
+        user_id = user.id
+
+        wishlist = WishList.objects.get(product_id=product_id, user_id_id=user_id)
+
+        context = {
         'product': product,
         'user_profile': user_profile,
-    }
+        'wishlist' : wishlist
+        }
+
+    except WishList.DoesNotExist:
+        context = {
+        'product': product,
+        'user_profile': user_profile,
+        }
+    except User.DoesNotExist:
+        context = {
+        'product': product,
+        'user_profile': user_profile,
+        }
+
+    
     return render(request, 'trade_post.html',context)
 
 
@@ -209,6 +231,30 @@ def pull_up(request, product_id) :
         product.save()
 
         return redirect('market:trade')
+    
+# 찜하기
+def add_dibs(request, product_id):
+
+    user = request.user
+    username = request.user.username
+    user_info = get_object_or_404(User, username=username)
+    user_id = user_info.id
+    product = get_object_or_404(Product, product_id=product_id)
+    
+    try:
+        wishlist_item = WishList.objects.get(user_id_id=user_id, product_id=product_id)
+        wishlist_item.delete()
+
+        return redirect('market:trade_post', product_id=product.pk)
+
+    except WishList.DoesNotExist:
+        
+        wishlist = WishList(user_id=user)
+        wishlist.product_id = product_id
+        wishlist.created_at = tz.now()
+        wishlist.save()
+
+        return redirect('market:trade_post', product_id=product.pk)
 
 def search(request):
     query = request.GET.get('search')
@@ -245,11 +291,15 @@ def buy_list(request):
 
 @login_required
 def wish_list(request):
-    # products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
+    username = request.user.username
+    user = get_object_or_404(User, username=username)
+    user_id = user.id
+    wish_list = WishList.objects.filter(user_id=user_id).order_by('-created_at')
 
-
-    # context = {
-    #     'products' : products
-    # }
+    for item in wish_list :
+        pass
+    context = {
+        'wish_list' : wish_list
+    }
     
-    return render(request, 'my_list.html')
+    return render(request, 'my_list.html', context)
