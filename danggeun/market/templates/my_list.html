@@ -21,7 +21,7 @@
             <div class="second">
                 <div class="full-box trade-box column">
                     <div class="flex-box full-box card-container between">
-                      {% for item in wish_list %}
+                      {% for item in wish_product %}
                         <div class="card-box">
                           <a href="{% url 'market:trade_post' item.product_id %}" class="trade-text-link">
                             <div class="card-img">
