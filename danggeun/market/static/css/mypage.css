@@ -1,24 +1,30 @@
-*{
+* {
     font-family: 'Pretendard', sans-serif;
 }
-body{
+
+body {
     background-color: #f8f9fa;
 }
-h3{
+
+h3 {
     font-weight: 800;
     font-size: larger;
 }
-.mydanggeun{
+
+.mydanggeun {
     gap: 0px;
     display: flex;
     flex-direction: row;
     width: 100%;
 }
-.first img{
+
+.first img {
     width: 24px;
     height: 24px;
 }
-.first, .second{
+
+.first,
+.second {
     display: flex;
     background-color: #f9f8f4;
     height: 900px;
@@ -27,15 +33,18 @@ h3{
     padding-top: 50px;
     flex-direction: column;
 }
-.first{
+
+.first {
     width: 250px;
     padding-left: 40px;
 }
-.second{
+
+.second {
     width: 100%;
     padding: 30px;
 }
-.profile{
+
+.profile {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -46,15 +55,18 @@ h3{
     margin: 65px 0 40px 0;
 
 }
-.width800{
+
+.width800 {
     width: 800px;
 }
-.user-info{
+
+.user-info {
     display: flex;
     gap: 15px;
     align-items: center;
 }
-.mytrade{
+
+.mytrade {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -62,7 +74,8 @@ h3{
     padding-top: 20px;
     /* padding-left: 120px; */
 }
-.etc{
+
+.etc {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -71,22 +84,25 @@ h3{
     /* padding-left: 120px; */
 }
 
-.menulist{
+.menulist {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-#userimg{
+
+#userimg {
     height: 50px;
     width: 50px;
 }
-.manner{
+
+.manner {
     display: flex;
     flex-direction: column;
     padding: 0 120px 0 120px;
     gap: 10px;
 }
-.manner-info{
+
+.manner-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -106,12 +122,22 @@ h3{
     background-color: #4CAF50;
     width: 0%;
 }
-.info{
+
+.info {
     display: flex;
     gap: 10px;
     align-items: center;
 }
-#smileImage{
+
+#smileImage {
     width: 30px;
     height: 30px;
+}
+
+.wish-none {
+    display: flex;
+    color: #4d5159;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
