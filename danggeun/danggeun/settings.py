@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 채팅
+    'channels',
+    'channels_redis',
     "django.contrib.sites",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,6 +52,17 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.kakao",
 ]
+
+# Channels
+ASGI_APPLICATION = 'danggeun.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 with open('config.json', 'r') as f:
     json_data = json.load(f)

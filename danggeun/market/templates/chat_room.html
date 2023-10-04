@@ -1,0 +1,179 @@
+{% load static%}{% load humanize %}
+<meta charset="utf-8"/>
+<title>Chat Room</title>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
+</head>
+<body>
+<body class="back-ye">
+{% include 'nav.html' %}
+  <div class="content-box">
+    <div class="container column">
+      <div class="post-box flex-box">
+
+        <!-- 채팅선택창 -->
+        <div class="chat-select-container">
+          <div class="flex-box">
+
+            <!-- 아이디및 체크박스 -->
+            <div class="id-box flex-box between">\
+              <span id="user-name">{{ user.username }}</span><br>
+              <div>
+                <label>
+                  안읽은 메세지만 보기
+                  <input type="checkbox" name="" id="">
+                </label>
+              </div>
+            </div>
+          </div>
+
+            <!-- 채팅 리스트 -->
+            <div class="chat-list-box flex-box column">
+              <!-- 봇 -->
+              <div class="chat-box flex-box">
+                <div class="ai-profile">
+                  <img src="{% static 'img/icon_aibot.png'%}" alt="">
+                </div>
+                <div>
+                  <p class="bold">AI 챗봇</p>
+                  <p class="chat-thumb-text">궁금한 내용을 물어보세요!</p>
+                </div>
+              </div>
+              <!-- 채팅방리스트 -->
+              {% include 'chat_room_list.html' %}
+            </div>
+          </div>
+          <!-- 채팅창-->
+          <div class="chat-main-container">
+            <div>
+              <div class="contact-info flex-box">
+                {{ opponent.username }}
+
+                <div class="temp">
+                  36.9도
+                </div>
+              </div>
+
+              <!--물품정보-->
+              <div class="goods-box flex-box between">
+                <div class="flex-box">
+                  <div class="selected-thumbnail-box">
+                    <img src="" alt="">
+                  </div>
+                  <div class="goods-info-box">
+                    <p>LG 양문형 냉장고 778L</p>
+                    <p class="bold">150,000원</p>
+                  </div>
+                </div>
+                <button>거래완료</button>
+              </div>
+
+              <!-- 채팅창 메인 -->
+              <div class="chat-container">
+                <div id="chat-log" class="message-log"></div>
+              </div>
+              <div class="chat-input">
+                  <input id="chat-message-input" class="chat-input" type="text" size="75" placeholder="메세지를 입력해주세요">
+                  <button id="chat-message-submit">전송</button>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'footer.html' %}
+</body>
+{{ room_name|json_script:"room-name" }}
+
+
+<script>
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+        + roomName
+        + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+
+
+    chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      const chatLog = document.querySelector('.chat-container');
+  
+      const messageBox = document.createElement('div');
+      messageBox.classList.add('message-box');
+      if (data.from_you) {
+          messageBox.classList.add('from-you');
+      } else {
+          messageBox.classList.add('from-me');
+      }
+  
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const ampm = hours >= 12 ? '오후' : '오전';
+      const formattedHours = hours % 12 || 12; // 0시를 12시로 표시
+  
+      const timestamp = document.createElement('p');
+      timestamp.classList.add('s-text');
+      timestamp.textContent = `${ampm}${formattedHours}:${minutes < 10 ? '0' : ''}${minutes} `;
+      messageBox.appendChild(timestamp);
+
+      const messageText = document.createElement('div');
+      messageText.classList.add('message-text');
+  
+      // 메시지 길이 확인
+      const messageContent = data.message;
+      if (messageContent.length > 50) {
+          const chunks = [];
+          for (let i = 0; i < messageContent.length; i += 50) {
+              chunks.push(messageContent.substring(i, i + 50));
+          }
+          messageText.innerHTML = chunks.join('<br>'); // 50자마다 줄바꿈 추가
+      } else {
+          messageText.textContent = messageContent; // 50자 미만인 경우 그대로 출력
+      }
+  
+      messageBox.appendChild(messageText);
+  
+
+  
+      chatLog.appendChild(messageBox);
+      chatLog.scrollTop = chatLog.scrollHeight; // 스크롤을 항상 아래로 이동
+  };
+  
+</script>
+</html>

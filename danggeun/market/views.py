@@ -309,3 +309,74 @@ def wish_list(request):
     }
     
     return render(request, 'my_list.html', context)
+
+
+# 채팅
+
+def room(request, room_name):
+    return render(request, 'chat_room.html', {
+        'room_name': room_name
+    })
+    
+def chat_room(request, pk):
+    user = request.user
+    chat_room = get_object_or_404(ChatRoom, pk=pk)
+
+    # 내 ID가 포함된 방만 가져오기
+    chat_rooms = ChatRoom.objects.filter(
+            Q(receiver_id=user) | Q(starter_id=user)
+        ).order_by('-latest_message_time')  # 최신 메시지 시간을 기준으로 내림차순 정렬
+    
+    # 각 채팅방의 최신 메시지를 가져오기
+    chat_room_data = []
+    for room in chat_rooms:
+        latest_message = Message.objects.filter(chatroom=room).order_by('-timestamp').first()
+        if latest_message:
+            chat_room_data.append({
+                'chat_room': room,
+                'latest_message': latest_message.content,
+                'timestamp': latest_message.timestamp,
+            })
+
+    # 상대방 정보 가져오기
+    if chat_room.receiver == user:
+        opponent = chat_room.starter
+    else:
+        opponent = chat_room.receiver
+
+    opponent_user = User.objects.get(pk=opponent.pk)
+    
+@login_required
+def get_latest_chat_no_pk(request):
+    user = request.user
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user),
+            latest_message_time__isnull=False
+        ).latest('latest_message_time')
+        return redirect('chat_room', pk=latest_chat.room_number)
+
+    except ChatRoom.DoesNotExist:
+        return redirect('alert', alert_message='진행중인 채팅이 없습니다.')
+    
+    # 채팅방 생성 또는 참여
+def create_or_join_chat(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+    chat_room = None
+    created = False
+
+    # 채팅방이 이미 존재하는지 확인
+    chat_rooms = ChatRoom.objects.filter(
+        Q(starter=user, receiver=post.user, post=post) |
+        Q(starter=post.user, receiver=user, post=post)
+    )
+    if chat_rooms.exists():
+        chat_room = chat_rooms.first()
+    else:
+        # 채팅방이 존재하지 않는 경우, 새로운 채팅방 생성
+        chat_room = ChatRoom(starter=user, receiver=post.user, post=post)
+        chat_room.save()
+        created = True
+
+    return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})

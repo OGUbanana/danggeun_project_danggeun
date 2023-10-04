@@ -35,7 +35,13 @@ urlpatterns = [
     path('mypage/',views.mypage, name='mypage'),
     path('sell_list/', views.sell_list, name='sell_list'),
     path('buy_list/', views.buy_list, name='buy_list'),
-    path('wish_list/', views.wish_list, name='wish_list')
+    path('wish_list/', views.wish_list, name='wish_list'),
+    
+    #채팅
+    path('<str:room_name>/', views.room, name='room'),
+    path('get_latest_chat/', views.get_latest_chat_no_pk, name='get_latest_chat_no_pk'),
+    path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

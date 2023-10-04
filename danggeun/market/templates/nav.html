@@ -26,7 +26,7 @@
           <input type="text" id="search" name="search" class="search" placeholder="물품이나 동네를 검색해보세요"/>
         </form>
         {% if user.is_authenticated %}
-          <a href="{% url 'market:chat' %}" class="ghost-button orange">채팅하기</a>
+          <a href="{% url 'market:get_latest_chat_no_pk' %}" class="ghost-button orange">채팅하기</a>
           <button class="user">
             <img src="{% static 'img/user.svg' %}" alt="user">
             <p class="username">{{ user.username }}</p>
