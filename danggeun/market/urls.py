@@ -33,7 +33,7 @@ urlpatterns = [
     path('dibs/<int:product_id>', views.add_dibs, name='dibs'),
 
     path('mypage/',views.mypage, name='mypage'),
-    path('my_list/', views.my_list, name='my_list'),
+    path('sell_list/', views.sell_list, name='sell_list'),
     path('buy_list/', views.buy_list, name='buy_list'),
     path('wish_list/', views.wish_list, name='wish_list')
 

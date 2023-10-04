@@ -57,6 +57,7 @@ class ChatRoom(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_chats')
     created_at = models.DateTimeField(auto_now_add=True)
     latest_message_time = models.DateTimeField(null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
 
 
     def str(self):
