@@ -11,7 +11,10 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed
+import openai
+from django.http import JsonResponse
+
 
 def main(request):
     return render(request, 'main.html')
@@ -330,3 +333,54 @@ def wish_list(request):
     }
     
     return render(request, 'my_list.html', context)
+
+
+
+def chatbot(request):
+    openai.api_key = settings.OPENAI_API_KEY
+    user_input = request.GET.get('message', '')
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "당신은 당근 마켓이라는 중고 거래 사이트에서 도움을 주는 비서입니다."},
+            {"role": "user", "content": f"'{user_input}'에 대한 답변을 적어주세요. 50자 이내로 작성해주세요."}
+        ]
+    )
+    bot_response = response.choices[0].message['content'].strip()
+
+    # '!'로 시작하는 키워드를 포함하고 있으면 추천 알고리즘 실행
+    if user_input.startswith('!'):
+        keyword = user_input[1:].strip()
+        recommended_products = recommend_products(keyword)
+        
+        if not recommended_products:
+            return JsonResponse({
+                "type": "text",
+                "data": f"'{keyword}'에 해당하는 상품이 없습니다."
+            })
+        else:
+            return JsonResponse({
+                "type": "product_recommendation",
+                "data": {
+                    "message": f"다음은 '{keyword}' 관련 추천 상품입니다:",
+                    "products": recommended_products
+                }
+            })
+
+    return JsonResponse({"type": "text", "data": bot_response})
+
+
+
+def recommend_products(keyword, limit=5):
+    products = Product.objects.filter(title__icontains=keyword).order_by('-product_id')[:limit] 
+    product_data = [{
+        'product_id': product.product_id,
+        'title': product.title,
+        'price': f"{product.sell_price}원",
+        'image_url': product.product_image.url if product.product_image else None
+    } for product in products]
+    return product_data
+
+
+def chat_page(request):
+    return render(request, 'chatbot.html')

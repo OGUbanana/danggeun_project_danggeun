@@ -58,6 +58,9 @@ with open('config.json', 'r') as f:
     google_social_secret = json_data['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
     naver_social_key = json_data['SOCIAL_AUTH_NAVER_KEY']
     naver_social_secret = json_data['SOCIAL_AUTH_NAVER_SECRET']
+    oepnai_api_key = json_data['OPENAI_API_KEY']
+
+OPENAI_API_KEY = oepnai_api_key
 
 # 구글 로그인을 위한 API 키 및 REDIRECT_URI 작성
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (

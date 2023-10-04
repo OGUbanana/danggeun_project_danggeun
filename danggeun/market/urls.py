@@ -35,7 +35,9 @@ urlpatterns = [
     path('mypage/',views.mypage, name='mypage'),
     path('sell_list/', views.sell_list, name='sell_list'),
     path('buy_list/', views.buy_list, name='buy_list'),
-    path('wish_list/', views.wish_list, name='wish_list')
+    path('wish_list/', views.wish_list, name='wish_list'),
+    path('chatai/', views.chatbot, name='chatai'),
+    path('chatbot/', views.chat_page, name='chatbot')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
