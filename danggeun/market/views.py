@@ -273,7 +273,7 @@ def mypage(request):
     return render(request, 'mypage.html')
 
 @login_required
-def my_list(request):
+def sell_list(request):
     products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
 
 
@@ -281,7 +281,7 @@ def my_list(request):
         'products' : products
     }
     
-    return render(request, 'my_list.html', context)
+    return render(request, 'sell_list.html', context)
 
 @login_required
 def buy_list(request):
