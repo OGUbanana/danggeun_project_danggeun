@@ -17,6 +17,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('location/', views.location, name='location'),
     path('trade_post/<int:product_id>', views.trade_post, name='trade_post'),
+    # 추가 매개변수를 받을 수 있는 URL 패턴
+    path('trade_post/<int:product_id>/<str:user_error>/', views.trade_post, name='trade_post_with_error'),
     path('set_region/', views.set_region, name='set_region'),
     path('set_region_certification/', views.set_region_certification, name='set_region_certification'),
     path('write/', views.write, name='write'),
@@ -27,6 +29,8 @@ urlpatterns = [
     
     # 끌어올리기
     path('pull_up/<int:product_id>', views.pull_up, name='pull_up'),
+    # 찜하기
+    path('dibs/<int:product_id>', views.add_dibs, name='dibs'),
 
     path('mypage/',views.mypage, name='mypage'),
     path('my_list/', views.my_list, name='my_list'),

@@ -22,7 +22,7 @@ trade_post.html
       <div class="container column">
         <div class="post-box">
           {% block content %}
-            <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="block-box">
+            <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="post-box-img">
             <div class="flex-box between info-button-box">
               <div class="user-info">
                 <h6>{{ product.user }}</h6>
@@ -33,17 +33,28 @@ trade_post.html
                   <a href="{% url 'market:edit' product.pk %}">
                     <button class="grey">수정하기</button>
                   </a>
-                  <a href="{% url 'market:pull_up' product.product_id%}">
+                  <a href="{% url 'market:pull_up' product.product_id %}">
                     <button class="orange">끌어올리기</button>
                   </a>
                   <button class="orange">채팅보기</button>
                 </div>
               {% else %}
-                <div class="button-box">
-                  <a href="{% url 'market:chat' %}">
-                    <button class="orange">채팅하기</button>
-                  </a>
-                </div>
+                {% if request.user.is_authenticated %}
+                  <div class="flex-box button-box">
+                    <a href="{% url 'market:chat' %}" class="button-box">
+                      <button class="orange">채팅하기</button>
+                    </a>
+                    {% if wishlist %}
+                      <a href="{% url 'market:dibs'  product.product_id %}">
+                        <img src="{% static 'img/icon_heart_fill.svg' %}"  class="dibs-button">
+                      </a>
+                    {% else %}
+                      <a href="{% url 'market:dibs'  product.product_id %}">
+                        <img src="{% static 'img/icon_heart.svg' %}"  class="dibs-button">
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endif %}
               {% endif %}
             </div>
             <hr class="line">
@@ -66,7 +77,5 @@ trade_post.html
       </div>
     </div>
     {% include 'footer.html' %}
-
   </body>
-
 </html>
