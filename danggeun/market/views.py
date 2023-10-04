@@ -174,6 +174,9 @@ def set_region(request):
             user = request.user
             try:
                 activity_area = ActivityArea.objects.get(user_id=user)
+                user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+                user_profile.region = region
+                user_profile.save()
             except ActivityArea.DoesNotExist:
                 activity_area = ActivityArea(user_id=user)
             
