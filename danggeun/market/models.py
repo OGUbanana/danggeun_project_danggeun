@@ -52,10 +52,15 @@ class ChatMessage(models.Model):
 
 # 채팅방
 class ChatRoom(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='chatroom')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    created_at = models.DateTimeField()
+    room_number = models.AutoField(primary_key=True)
+    starter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='started_chats')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_chats')
+    created_at = models.DateTimeField(auto_now_add=True)
+    latest_message_time = models.DateTimeField(null=True, blank=True)
+
+
+    def str(self):
+        return f'ChatRoom: {self.starter.username} and {self.receiver.username}'
 
     class Meta:
         db_table = 'chat_room'
