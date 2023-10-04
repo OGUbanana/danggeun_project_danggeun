@@ -65,9 +65,29 @@ h3 {
     border: none;
     border-radius: 8px;
 }
+button:focus{
+    outline: none;
+    box-shadow: none;
+}
 
-button:hover {
+#status-btn:hover, .orange:hover , .grey:hover {
     opacity: 0.8;
+}
+#status-btn{
+    background-color: #dedede;
+    color: #000;
+    display: flex;
+    font-weight: 700;
+    height: 40px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    align-items: center;
+}
+#status-btn:focus{
+    opacity: 0.8;
+    outline: none;
+    box-shadow: none;
 }
 
 hr {

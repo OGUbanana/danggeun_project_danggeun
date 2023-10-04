@@ -1,6 +1,6 @@
 
 from django.utils import timezone 
-from .models import Product, ActivityArea, UserProfile, WishList
+from .models import Product, ActivityArea, UserProfile, WishList, ChatRoom
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 
 def main(request):
     return render(request, 'main.html')
@@ -72,7 +72,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.filter(status='N').order_by('-refreshed_at', '-created_at')
+    products = Product.objects.filter(Q(status='N') | Q(status='R')).order_by('-refreshed_at', '-created_at')
 
     context = {
         'products' : products
@@ -83,10 +83,9 @@ def trade(request):
 def location(request):
     return render(request, 'location.html')
 
-def trade_post(request,product_id):
-    
+def trade_post(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    
+
     if request.user.is_authenticated:
         if request.user != product.user:
             product.view_count += 1
@@ -95,37 +94,58 @@ def trade_post(request,product_id):
         product.view_count += 1
         product.save()
 
+    chatrooms = ChatRoom.objects.filter(product=product)
     try:
         user_profile = UserProfile.objects.get(user=product.user)
     except UserProfile.DoesNotExist:
-            user_profile = None
+        user_profile = None
 
-    try:
-        username = request.user.username
-        user = User.objects.get(username=username)
-        user_id = user.id
+    wishlist = None
+    if request.user.is_authenticated:
+        try:
+            wishlist = WishList.objects.get(product_id=product_id, user_id=request.user.id)
+        except WishList.DoesNotExist:
+            pass
 
-        wishlist = WishList.objects.get(product_id=product_id, user_id_id=user_id)
-
-        context = {
+    context = {
         'product': product,
         'user_profile': user_profile,
-        'wishlist' : wishlist
-        }
+        'wishlist': wishlist,
+        'chatrooms': chatrooms
+    }
 
-    except WishList.DoesNotExist:
-        context = {
-        'product': product,
-        'user_profile': user_profile,
-        }
-    except User.DoesNotExist:
-        context = {
-        'product': product,
-        'user_profile': user_profile,
-        }
+    return render(request, 'trade_post.html', context)
 
-    
-    return render(request, 'trade_post.html',context)
+# 상품 상태 업데이트
+def product_status(request, product_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    product = get_object_or_404(Product, pk=product_id)
+
+    new_status = request.POST.get('status')
+    selected_chatroom_id = request.POST.get('selected_chatroom', None)
+
+    if new_status == 'R' and selected_chatroom_id:
+        chatroom = get_object_or_404(ChatRoom, pk=selected_chatroom_id)
+        if chatroom.product == product:
+            product.status = 'R'
+            product.save()
+
+    elif new_status == 'Y' and selected_chatroom_id:
+        chatroom = get_object_or_404(ChatRoom, pk=selected_chatroom_id)
+        if chatroom.product == product:
+            product.status = 'Y'
+            product.buyer = chatroom.receiver
+            product.save()
+
+    elif new_status == 'N':
+        product.status = 'N'
+        product.save()
+
+    return redirect('market:trade_post', product_id=product.pk)
+
+
 
 
 def alert(request, alert_message):
@@ -285,12 +305,13 @@ def sell_list(request):
 
 @login_required
 def buy_list(request):
-    # products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
 
-    # context = {
-    #     'products' : products
-    # }
-    return render(request, 'my_list.html')
+    products = Product.objects.filter(buyer=request.user).order_by('-refreshed_at', '-created_at')
+
+    context = {
+        'products' : products
+    }
+    return render(request, 'sell_list.html', context)
 
 @login_required
 def wish_list(request):

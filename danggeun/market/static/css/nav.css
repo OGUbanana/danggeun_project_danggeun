@@ -97,6 +97,8 @@ input{
     padding: 10px;
 }
 .mypage a:hover, .logout a:hover{
+    text-decoration-line: none;
+    color: black;
     background: var(--gray200) radial-gradient(circle,transparent 1%,var(--gray200) 1%) center/15000%;
     transition: background-color .6s,background-size .6s;
     border-radius: 6px;
