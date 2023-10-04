@@ -298,11 +298,14 @@ def wish_list(request):
     user = get_object_or_404(User, username=username)
     user_id = user.id
     wish_list = WishList.objects.filter(user_id=user_id).order_by('-created_at')
+    wish_product = []
 
     for item in wish_list :
-        pass
+        product = Product.objects.get(product_id=item.product_id)
+        wish_product.append(product)
+
     context = {
-        'wish_list' : wish_list
+        'wish_product' : wish_product,
     }
     
     return render(request, 'my_list.html', context)
