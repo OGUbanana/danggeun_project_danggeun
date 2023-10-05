@@ -208,11 +208,11 @@ hr{
 /* 채팅창 메인 */
 .chat-container{
     padding: 14px 20px;
-    max-height: 264px;
+    height: 350px;
 
 }
 #chatbox{
-    max-height: 264px;
+    max-height: 340px;
     overflow-y: auto;
     overflow-x: hidden;
     ::-webkit-scrollbar {

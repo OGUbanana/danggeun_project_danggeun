@@ -36,6 +36,8 @@ async function sendMessage() {
             <div class="message-text">${message}</div>
         </div>
     `;
+    document.getElementById("message").value = "";
+
     chatbox.scrollTop = chatbox.scrollHeight;
 
     // 로딩 애니메이션 시작
@@ -84,7 +86,6 @@ async function sendMessage() {
         chatbox.innerHTML += productHTML;
     }
 
-    document.getElementById("message").value = "";
     setTimeout(() => {
         chatbox.scrollTop = chatbox.scrollHeight;
     }, 0);
