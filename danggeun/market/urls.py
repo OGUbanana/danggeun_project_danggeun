@@ -17,7 +17,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('location/', views.location, name='location'),
     path('trade_post/<int:product_id>', views.trade_post, name='trade_post'),
-    # 추가 매개변수를 받을 수 있는 URL 패턴
+    path('product_status/<int:product_id>', views.product_status, name='product_status'),
     path('trade_post/<int:product_id>/<str:user_error>/', views.trade_post, name='trade_post_with_error'),
     path('set_region/', views.set_region, name='set_region'),
     path('set_region_certification/', views.set_region_certification, name='set_region_certification'),
@@ -35,7 +35,9 @@ urlpatterns = [
     path('mypage/',views.mypage, name='mypage'),
     path('sell_list/', views.sell_list, name='sell_list'),
     path('buy_list/', views.buy_list, name='buy_list'),
-    path('wish_list/', views.wish_list, name='wish_list')
+    path('wish_list/', views.wish_list, name='wish_list'),
+    path('chatai/', views.chatbot, name='chatai'),
+    path('chatbot/', views.chat_page, name='chatbot')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

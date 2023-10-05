@@ -24,6 +24,7 @@ class Product(models.Model):
     description = models.TextField()
     refreshed_at = models.DateTimeField(db_index=True, auto_now=True)
     created_at = models.DateTimeField(auto_now=True)
+    buyer = models.ForeignKey(User, related_name='purchased_posts', null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         db_table = 'product'
@@ -60,7 +61,7 @@ class ChatRoom(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='chat_rooms', null=True, blank=True)
 
 
-    def str(self):
+    def __str__(self):
         return f'ChatRoom: {self.starter.username} and {self.receiver.username}'
 
     class Meta:

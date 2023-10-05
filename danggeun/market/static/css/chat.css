@@ -17,7 +17,7 @@ h3{
 .post-box{
     background-color: #fff;
     border: 1px solid #dedede;
-    margin: 48px 0 0 0;
+    margin: 48px 0 0 0 ;
     align-items: stretch;
     height: 580px;
 }
@@ -88,6 +88,12 @@ hr{
 }
 
 /* 채팅선택창 */
+.chatroom-link{
+    width: -webkit-fill-available;
+    text-decoration: none;
+    color: #000;
+}
+
 .chat-select-container{
     width: 30%;
     background-color: #fff;
@@ -109,7 +115,9 @@ hr{
 }
 
 .chat-list-box{
-    width: 100%;    
+    width: 100%;
+    overflow-y: scroll;
+    height: 92%;
 }
 
 .chat-box{
@@ -135,9 +143,12 @@ hr{
 }
 
 .s-text{
+    /* display: flex; */
     margin-left: 4px;
     font-size: 13px;
     opacity: 0.5;
+    /* align-content: flex-end; */
+    /* flex-wrap: wrap; */
 }
 
 .chat-box img{
@@ -167,7 +178,8 @@ hr{
 
 .goods-box{
     padding: 14px 20px;
-    border-bottom: 1px solid #e2e2e2;;
+    border-top: 1px solid #e2e2d2;
+    border-bottom: 1px solid #e2e2e2;
 }
 
 .goods-info-box{
@@ -196,14 +208,23 @@ hr{
 /* 채팅창 메인 */
 .chat-container{
     padding: 14px 20px;
-    max-height: 500px;
-    overflow-y: auto; 
+    max-height: 264px;
+
+}
+#chatbox{
+    max-height: 264px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    ::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .message-box{
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
+    margin-bottom: 6px;
 }
 
 .message-text{

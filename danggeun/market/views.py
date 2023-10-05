@@ -1,6 +1,6 @@
 
 from django.utils import timezone 
-from .models import Product, ActivityArea, UserProfile, WishList
+from .models import Product, ActivityArea, UserProfile, WishList, ChatRoom
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -11,7 +11,10 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponseNotAllowed
+import openai
+from django.http import JsonResponse
+
 
 def main(request):
     return render(request, 'main.html')
@@ -72,7 +75,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form, 'error_message': error_message})
 
 def trade(request):
-    products = Product.objects.filter(status='N').order_by('-refreshed_at', '-created_at')
+    products = Product.objects.filter(Q(status='N') | Q(status='R')).order_by('-refreshed_at', '-created_at')
 
     context = {
         'products' : products
@@ -83,10 +86,9 @@ def trade(request):
 def location(request):
     return render(request, 'location.html')
 
-def trade_post(request,product_id):
-    
+def trade_post(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    
+
     if request.user.is_authenticated:
         if request.user != product.user:
             product.view_count += 1
@@ -95,37 +97,58 @@ def trade_post(request,product_id):
         product.view_count += 1
         product.save()
 
+    chatrooms = ChatRoom.objects.filter(product=product)
     try:
         user_profile = UserProfile.objects.get(user=product.user)
     except UserProfile.DoesNotExist:
-            user_profile = None
+        user_profile = None
 
-    try:
-        username = request.user.username
-        user = User.objects.get(username=username)
-        user_id = user.id
+    wishlist = None
+    if request.user.is_authenticated:
+        try:
+            wishlist = WishList.objects.get(product_id=product_id, user_id=request.user.id)
+        except WishList.DoesNotExist:
+            pass
 
-        wishlist = WishList.objects.get(product_id=product_id, user_id_id=user_id)
-
-        context = {
+    context = {
         'product': product,
         'user_profile': user_profile,
-        'wishlist' : wishlist
-        }
+        'wishlist': wishlist,
+        'chatrooms': chatrooms
+    }
 
-    except WishList.DoesNotExist:
-        context = {
-        'product': product,
-        'user_profile': user_profile,
-        }
-    except User.DoesNotExist:
-        context = {
-        'product': product,
-        'user_profile': user_profile,
-        }
+    return render(request, 'trade_post.html', context)
 
-    
-    return render(request, 'trade_post.html',context)
+# 상품 상태 업데이트
+def product_status(request, product_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    product = get_object_or_404(Product, pk=product_id)
+
+    new_status = request.POST.get('status')
+    selected_chatroom_id = request.POST.get('selected_chatroom', None)
+
+    if new_status == 'R' and selected_chatroom_id:
+        chatroom = get_object_or_404(ChatRoom, pk=selected_chatroom_id)
+        if chatroom.product == product:
+            product.status = 'R'
+            product.save()
+
+    elif new_status == 'Y' and selected_chatroom_id:
+        chatroom = get_object_or_404(ChatRoom, pk=selected_chatroom_id)
+        if chatroom.product == product:
+            product.status = 'Y'
+            product.buyer = chatroom.receiver
+            product.save()
+
+    elif new_status == 'N':
+        product.status = 'N'
+        product.save()
+
+    return redirect('market:trade_post', product_id=product.pk)
+
+
 
 
 def alert(request, alert_message):
@@ -285,12 +308,13 @@ def sell_list(request):
 
 @login_required
 def buy_list(request):
-    # products = Product.objects.filter(user=request.user).order_by('-refreshed_at', '-created_at')
 
-    # context = {
-    #     'products' : products
-    # }
-    return render(request, 'my_list.html')
+    products = Product.objects.filter(buyer=request.user).order_by('-refreshed_at', '-created_at')
+
+    context = {
+        'products' : products
+    }
+    return render(request, 'sell_list.html', context)
 
 @login_required
 def wish_list(request):
@@ -309,3 +333,54 @@ def wish_list(request):
     }
     
     return render(request, 'my_list.html', context)
+
+
+
+def chatbot(request):
+    openai.api_key = settings.OPENAI_API_KEY
+    user_input = request.GET.get('message', '')
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "당신은 당근 마켓이라는 중고 거래 사이트에서 도움을 주는 비서입니다."},
+            {"role": "user", "content": f"'{user_input}'에 대한 답변을 적어주세요. 50자 이내로 작성해주세요."}
+        ]
+    )
+    bot_response = response.choices[0].message['content'].strip()
+
+    # '!'로 시작하는 키워드를 포함하고 있으면 추천 알고리즘 실행
+    if user_input.startswith('!'):
+        keyword = user_input[1:].strip()
+        recommended_products = recommend_products(keyword)
+        
+        if not recommended_products:
+            return JsonResponse({
+                "type": "text",
+                "data": f"'{keyword}'에 해당하는 상품이 없습니다."
+            })
+        else:
+            return JsonResponse({
+                "type": "product_recommendation",
+                "data": {
+                    "message": f"다음은 '{keyword}' 관련 추천 상품입니다:",
+                    "products": recommended_products
+                }
+            })
+
+    return JsonResponse({"type": "text", "data": bot_response})
+
+
+
+def recommend_products(keyword, limit=5):
+    products = Product.objects.filter(title__icontains=keyword).order_by('-product_id')[:limit] 
+    product_data = [{
+        'product_id': product.product_id,
+        'title': product.title,
+        'price': f"{product.sell_price}원",
+        'image_url': product.product_image.url if product.product_image else None
+    } for product in products]
+    return product_data
+
+
+def chat_page(request):
+    return render(request, 'chatbot.html')
