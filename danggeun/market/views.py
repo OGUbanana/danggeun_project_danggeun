@@ -1,6 +1,6 @@
 
 from django.utils import timezone 
-from .models import Product, ActivityArea, UserProfile, WishList, ChatRoom
+from .models import Product, ActivityArea, UserProfile, WishList, ChatRoom, ChatMessage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -11,7 +11,12 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as tz
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed
+from django.utils.decorators import method_decorator
+import openai
+from django.http import JsonResponse
+from django.views import View
+
 
 def main(request):
     return render(request, 'main.html')
@@ -20,8 +25,165 @@ def main(request):
 def search(request):
     return render(request, 'search.html')
 
-def chat(request):
+@login_required
+def chat_view(request):
     return render(request, 'chat.html')
+
+# 채팅 ################################################################################
+
+# 채팅테스트
+
+def index(request): 
+    return render(request, 'chat_index.html')
+
+
+# 채팅방 열기
+def chat_room(request, pk):
+    user = request.user
+    chat_room = get_object_or_404(ChatRoom, pk=pk)
+
+    # 내 ID가 포함된 방만 가져오기
+    chat_rooms = ChatRoom.objects.filter(
+            Q(receiver_id=user) | Q(starter_id=user)
+        ).order_by('-latest_message_time')  # 최신 메시지 시간을 기준으로 내림차순 정렬
+    
+    # 각 채팅방의 최신 메시지를 가져오기
+    chat_room_data = []
+    for room in chat_rooms:
+        latest_message = ChatMessage.objects.filter(chatroom=room).order_by('-timestamp').first()
+        if latest_message:
+            chat_room_data.append({
+                'chat_room': room,
+                'latest_message': latest_message.content,
+                'timestamp': latest_message.timestamp,
+            })
+
+    # 상대방 정보 가져오기
+    if chat_room.receiver == user:
+        opponent = chat_room.starter
+    else:
+        opponent = chat_room.receiver
+
+    opponent_user = User.objects.get(pk=opponent.pk)
+
+
+    # post의 상태 확인 및 처리
+    if chat_room.product is None:
+        seller = None
+        product = None
+    else:
+        seller = chat_room.product.user
+        product = chat_room.product
+
+    return render(request, 'chat_room.html', {
+        'chat_room': chat_room,
+        'chat_room_data': chat_room_data,
+        'room_name': chat_room.pk,
+        'seller': seller,
+        'product': product,
+        'opponent': opponent_user,
+    })
+
+
+# 채팅방 생성 또는 참여
+def create_or_join_chat(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    user = request.user
+    chat_room = None
+    created = False
+
+    # 채팅방이 이미 존재하는지 확인
+    chat_rooms = ChatRoom.objects.filter(
+        Q(starter=user, receiver=product.user, product=product) |
+        Q(starter=product.user, receiver=user, product=product)
+    )
+    if chat_rooms.exists():
+        chat_room = chat_rooms.first()
+    else:
+        # 채팅방이 존재하지 않는 경우, 새로운 채팅방 생성
+        chat_room = ChatRoom(starter=user, receiver=product.user, product=product)
+        chat_room.save()
+        created = True
+
+    return JsonResponse({'success': True, 'chat_room_id': chat_room.pk, 'created': created})
+
+
+# 가장 최근 채팅방 가져오기
+@login_required
+def get_latest_chat(request, pk):
+    user = request.user
+    # 1) 해당 pk인 채팅방 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat_with_pk = ChatRoom.objects.filter(
+            Q(product_id=pk) &
+            (Q(receiver=user) | Q(starter=user))
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat_with_pk.room_number})
+    except ChatRoom.DoesNotExist:
+        pass
+
+    # 2) 위 경우가 없다면 내가 소속된 채팅방 전체 중 가장 최신 채팅방으로 리디렉션
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user)
+        ).latest('latest_message_time')
+        return JsonResponse({'success': True, 'chat_room_id': latest_chat.room_number})
+
+    # 3) 모두 없다면 현재 페이지로 리디렉션
+    except ChatRoom.DoesNotExist:
+        return JsonResponse({
+            'success': False, 
+            'alert_message': '진행중인 채팅이 없습니다.'
+        })
+
+        
+# nav/footer에서 채팅하기 눌렀을 때
+@login_required
+def get_latest_chat_no_pk(request):
+    user = request.user
+    try:
+        latest_chat = ChatRoom.objects.filter(
+            Q(receiver=user) | Q(starter=user),
+            latest_message_time__isnull=False
+        ).latest('latest_message_time')
+        return redirect('market:chat_room', pk=latest_chat.room_number)
+
+    except ChatRoom.DoesNotExist:
+        return redirect('market:alert', alert_message='진행중인 채팅이 없습니다.', redirect_url='current')
+    
+@method_decorator(login_required, name='dispatch')
+class ConfirmDealView(View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+        user = request.user
+
+        previous_url = request.META.get('HTTP_REFERER')
+        url_parts = previous_url.split('/')
+        original_product_id = url_parts[-2] if url_parts[-1] == '' else url_parts[-1]
+
+        chat_room = get_object_or_404(ChatRoom, room_number=original_product_id)
+
+
+        if chat_room.starter == user:
+            other_user = chat_room.receiver
+        else:
+            other_user = chat_room.starter
+
+        if chat_room is None:
+            messages.error(request, 'Chat room does not exist.')
+            return redirect('market:trade')
+        
+        # buyer를 설정하고, product_sold를 Y로 설정
+        product.buyer = chat_room.receiver if chat_room.starter == product.user else chat_room.starter
+        product.status = 'Y'
+        product.save()
+        
+        # 거래가 확정되면 새로고침
+        return redirect('market:chat_room', pk=chat_room.room_number)
+
+# 채팅 끝 ################################################################################
+
+
 
 def user_login(request):
     if request.user.is_authenticated:
@@ -330,3 +492,54 @@ def wish_list(request):
     }
     
     return render(request, 'my_list.html', context)
+
+
+
+def chatbot(request):
+    openai.api_key = settings.OPENAI_API_KEY
+    user_input = request.GET.get('message', '')
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "당신은 당근 마켓이라는 중고 거래 사이트에서 도움을 주는 비서입니다."},
+            {"role": "user", "content": f"'{user_input}'에 대한 답변을 적어주세요. 50자 이내로 작성해주세요."}
+        ]
+    )
+    bot_response = response.choices[0].message['content'].strip()
+
+    # '!'로 시작하는 키워드를 포함하고 있으면 추천 알고리즘 실행
+    if user_input.startswith('!'):
+        keyword = user_input[1:].strip()
+        recommended_products = recommend_products(keyword)
+        
+        if not recommended_products:
+            return JsonResponse({
+                "type": "text",
+                "data": f"'{keyword}'에 해당하는 상품이 없습니다."
+            })
+        else:
+            return JsonResponse({
+                "type": "product_recommendation",
+                "data": {
+                    "message": f"다음은 '{keyword}' 관련 추천 상품입니다:",
+                    "products": recommended_products
+                }
+            })
+
+    return JsonResponse({"type": "text", "data": bot_response})
+
+
+
+def recommend_products(keyword, limit=5):
+    products = Product.objects.filter(title__icontains=keyword).order_by('-product_id')[:limit] 
+    product_data = [{
+        'product_id': product.product_id,
+        'title': product.title,
+        'price': f"{product.sell_price}원",
+        'image_url': product.product_image.url if product.product_image else None
+    } for product in products]
+    return product_data
+
+
+def chat_page(request):
+    return render(request, 'chatbot.html')
