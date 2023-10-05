@@ -1,17 +1,23 @@
-body{
+body {
   background-color: #f8f9fa;
+  -ms-overflow-style: none;
 }
 
-.write-box{
-    background-color: #fff;
-    width: 100%;
-    padding: 56px;
-    border: 1px solid #dedede;
-    margin: 48px 0 0 0 ;
+::-webkit-scrollbar {
+  display: none;
+}
+
+.write-box {
+  background-color: #fff;
+  width: 100%;
+  padding: 56px;
+  border: 1px solid #dedede;
+  margin: 48px 0 0 0;
 
 }
 
- .about-trade input, textarea{
+.about-trade input,
+textarea {
   background-color: #f3f3f3;
   border: none;
   font-size: 16px;
@@ -20,7 +26,7 @@ body{
 
 }
 
-label{
+label {
   padding: 12px 0 4px 0;
 }
 
@@ -28,7 +34,8 @@ label{
   border: 1px solid #dedede;
   width: 240px;
   height: 240px;
-  box-sizing: border-box; /* 이 부분을 추가 */
+  box-sizing: border-box;
+  /* 이 부분을 추가 */
   position: relative;
   overflow: hidden;
   display: flex;
@@ -43,18 +50,19 @@ label{
   object-fit: cover;
 }
 
-.title-box{
+.title-box {
   padding: 0 0 0 20px;
 }
 
-.submit-button-box{
+.submit-button-box {
   display: flex;
   gap: 50px;
 }
 
 
-.edit-button, .submit-button{
-  width:-webkit-fill-available;
+.edit-button,
+.submit-button {
+  width: -webkit-fill-available;
   margin-top: 40px;
   background-color: #fa6616;
   border: none;
@@ -63,8 +71,9 @@ label{
   font-weight: 700;
   padding: 12px 0;
 }
-.delete-button{
-  width:-webkit-fill-available;
+
+.delete-button {
+  width: -webkit-fill-available;
   margin-top: 40px;
   background-color: #d13100;
   border: none;
