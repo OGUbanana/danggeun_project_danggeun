@@ -1,6 +1,5 @@
-<!-- chat/templates/chat/chat_room_list.html -->
 {% load humanize %}
-<!-- chat/templates/chat/chat_room_list.html -->
+
 {% for chat_room_data in chat_room_data %}
   <a href="{% url 'market:chat_room' chat_room_data.chat_room.room_number %}" class="chatroom-link">
     <div class="flex-box chat-box between">

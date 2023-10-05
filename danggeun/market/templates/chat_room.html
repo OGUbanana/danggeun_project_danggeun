@@ -1,4 +1,3 @@
-
 {% load static%}{% load humanize %}
 
 <!DOCTYPE html>
@@ -47,8 +46,10 @@
                   <img src="{% static 'img/icon_aibot.png'%}" alt="">
                 </div>
                 <div>
-                  <p class="bold">AI 챗봇</p>
-                  <p class="chat-thumb-text">궁금한 내용을 물어보세요!</p>
+                  <a href="{% url 'market:chatbot' %}">
+                    <p class="bold">AI 챗봇</p>
+                    <p class="chat-thumb-text">궁금한 내용을 물어보세요!</p>
+                  </a>
                 </div>
               </div>
               <!-- 채팅방리스트 -->

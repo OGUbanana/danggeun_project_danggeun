@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/global.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/test.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}"/>
     <title>채팅하기</title>
@@ -17,6 +16,7 @@
 
   <body class="back-ye">
     {% include 'nav.html' %}
+
     <div class="content-box">
       <div class="container column">
         <div class="post-box flex-box">
@@ -27,12 +27,13 @@
 
               <!-- 아이디및 체크박스 -->
               <div class="id-box flex-box between">
-                아이디
+                <span id="user-name">{{ user.username }}</span><br>
+
                 <div>
-                  <label>
+                  {% comment %} <label>
                     안읽은 메세지만 보기
                     <input type="checkbox" name="" id="">
-                  </label>
+                  </label> {% endcomment %}
                 </div>
               </div>
             </div>
@@ -45,10 +46,15 @@
                   <img src="{% static 'img/icon_aibot.png'%}" alt="">
                 </div>
                 <div>
-                  <p class="bold">AI 챗봇</p>
-                  <p class="chat-thumb-text">궁금한 내용을 물어보세요!</p>
+                  <a href="{% url 'market:chatbot' %}">
+                    <p class="bold">AI 챗봇</p>
+                    <p class="chat-thumb-text">궁금한 내용을 물어보세요!</p>
+                  </a>
                 </div>
               </div>
+              <!-- 채팅방리스트 -->
+              {% include 'chat_room_list.html' %}
+
             </div>
           </div>
 

@@ -542,4 +542,24 @@ def recommend_products(keyword, limit=5):
 
 
 def chat_page(request):
-    return render(request, 'chatbot.html')
+    user = request.user
+
+    # 내 ID가 포함된 방만 가져오기
+    chat_rooms = ChatRoom.objects.filter(
+            Q(receiver_id=user) | Q(starter_id=user)
+        ).order_by('-latest_message_time')  # 최신 메시지 시간을 기준으로 내림차순 정렬
+    
+    # 각 채팅방의 최신 메시지를 가져오기
+    chat_room_data = []
+    for room in chat_rooms:
+        latest_message = ChatMessage.objects.filter(chatroom=room).order_by('-timestamp').first()
+        if latest_message:
+            chat_room_data.append({
+                'chat_room': room,
+                'latest_message': latest_message.content,
+                'timestamp': latest_message.timestamp,
+            })
+
+    return render(request, 'chatbot.html', {
+        'chat_room_data': chat_room_data,
+    })
