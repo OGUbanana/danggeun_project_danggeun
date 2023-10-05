@@ -12,7 +12,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('chat/', views.chat, name='chat'),
+    path('chat/', views.chat_view, name='chat'),
     path('trade/', views.trade, name='trade'),
     path('register/', views.register, name='register'),
     path('location/', views.location, name='location'),
@@ -37,7 +37,16 @@ urlpatterns = [
     path('buy_list/', views.buy_list, name='buy_list'),
     path('wish_list/', views.wish_list, name='wish_list'),
     path('chatai/', views.chatbot, name='chatai'),
-    path('chatbot/', views.chat_page, name='chatbot')
+    path('chatbot/', views.chat_page, name='chatbot'),
+
+    path("chat_index", views.index, name='index'),  
+    path('chat_index/<int:pk>/', views.chat_room, name='chat_room'),
+    path('create_or_join_chat/<int:pk>/', views.create_or_join_chat, name='create_or_join_chat'),
+    path('get_latest_chat/', views.get_latest_chat_no_pk, name='get_latest_chat_no_pk'),
+    path('get_latest_chat/<int:pk>/', views.get_latest_chat, name='get_latest_chat'),
+    path('confirm_deal/<int:product_id>/', views.ConfirmDealView.as_view(), name='confirm_deal'),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
