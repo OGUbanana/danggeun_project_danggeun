@@ -196,6 +196,7 @@ def user_login(request):
                 user_pwd = form.cleaned_data['password']
                 user = authenticate(request, username=user_id, password=user_pwd)
                 if user is not None:
+                    
                     login(request, user)
                     return redirect('market:main')
         return render(request, 'registration/login.html', {"form": form})
@@ -221,7 +222,7 @@ def register(request):
                 
                 user = User.objects.create_user(username=username, password=password1)
                 
-                
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
             
             
