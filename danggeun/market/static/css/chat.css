@@ -225,6 +225,7 @@ hr{
     align-items: flex-end;
     gap: 8px;
     margin-bottom: 6px;
+    flex-direction: row;
 }
 
 .message-text{
@@ -235,10 +236,12 @@ hr{
 }
 
 .from-me{
-    justify-content: flex-end;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
 }
 
-.from-me div{
+.from-me .message-text{
     background-color: #fa6616;
     color: #fff;
 }
