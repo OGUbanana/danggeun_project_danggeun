@@ -4,6 +4,11 @@
 
 body {
     background-color: #f8f9fa;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 h3 {

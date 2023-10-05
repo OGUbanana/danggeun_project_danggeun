@@ -1,19 +1,30 @@
-*{
+* {
     font-family: 'Pretendard', sans-serif;
 }
 
-button, a, link{
+body {
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+button,
+a,
+link {
     cursor: pointer;
 }
 
 
-.content-box{
+.content-box {
     margin-top: 65px;
 }
 
 
-.container{
-    width: 1200px;
+
+.container {
+    width: 100%;
     display: flex;
     justify-content: center;
     margin: auto;
@@ -21,11 +32,11 @@ button, a, link{
     font-family: 'Pretendard', sans-serif;
 }
 
-.block-box{
+.block-box {
     display: block;
 }
 
-.hide{
+.hide {
     display: none;
 }
 
@@ -36,49 +47,49 @@ button, a, link{
 }
 
 
-.flex-box{
+.flex-box {
     display: flex;
     align-items: center;
 }
 
-.column{
+.column {
     flex-direction: column;
 }
 
-.baseline{
+.baseline {
     align-items: baseline;
 }
 
-.center{
+.center {
     align-items: center;
 }
 
-.between{
+.between {
     justify-content: space-between;
 }
 
-.full-box{
+.full-box {
     width: 100%;
 }
 
-.gap16{
+.gap16 {
     gap: 16px;
-    }
-    
-.gap8{
-gap: 8px;
 }
 
-h1{
+.gap8 {
+    gap: 8px;
+}
+
+h1 {
     font-size: 50px;
     font-weight: 700;
     line-height: 64px;
 }
 
-.bold{
+.bold {
     font-weight: 700;
 }
 
-.back-ye{
+.back-ye {
     background-color: #fffae0;
 }

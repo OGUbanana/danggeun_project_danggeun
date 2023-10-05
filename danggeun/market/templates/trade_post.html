@@ -127,7 +127,7 @@
                     <div>
                         <input type="radio" name="selected_chatroom" value="{{ chatroom.pk }}" required>
                         {{ chatroom.receiver }}
-                        <div>마지막 대화 {{ chatroom.latest_message_time }}</div>
+                        <div>마지막 대화 {{ chatroom.latest_message_time|date:'Y-m-d H:i' }}</div>
                     </div>
                 {% endfor %}
             </div>

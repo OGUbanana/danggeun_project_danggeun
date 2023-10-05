@@ -1,5 +1,10 @@
 body {
     background-color: #f8f9fa;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 .profile-img {
@@ -65,15 +70,19 @@ h3 {
     border: none;
     border-radius: 8px;
 }
-button:focus{
+
+button:focus {
     outline: none;
     box-shadow: none;
 }
 
-#status-btn:hover, .orange:hover , .grey:hover {
+#status-btn:hover,
+.orange:hover,
+.grey:hover {
     opacity: 0.8;
 }
-#status-btn{
+
+#status-btn {
     background-color: #dedede;
     color: #000;
     display: flex;
@@ -84,7 +93,8 @@ button:focus{
     border-radius: 8px;
     align-items: center;
 }
-#status-btn:focus{
+
+#status-btn:focus {
     opacity: 0.8;
     outline: none;
     box-shadow: none;

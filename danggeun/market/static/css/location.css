@@ -1,4 +1,12 @@
-.primary-button{
+body {
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.primary-button {
     padding: 16px;
     background-color: #fa6616;
     color: #fff;
@@ -10,28 +18,28 @@
     width: 100%;
 }
 
-.primary-button:hover{
+.primary-button:hover {
     background-color: #ff823f;
 }
 
-.region-setting-box{
+.region-setting-box {
     margin-top: 64px;
 }
 
-.region-setting-box label{
+.region-setting-box label {
     margin-bottom: 2px;
 }
 
-.region-setting{
+.region-setting {
     background-color: #fff;
 }
 
-.region-input input{
-    width:80%;
-    padding:14px;
+.region-input input {
+    width: 80%;
+    padding: 14px;
     border-radius: 2px;
 }
 
-.region-input button{
-    padding:14px;
+.region-input button {
+    padding: 14px;
 }
