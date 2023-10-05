@@ -88,7 +88,11 @@
 
               <!--채팅창 메인-->
 
-              <div id="chat-log" class="chat-container"></div>
+              <div id="chatbox" class="chat-container">
+                <div id="chat-log">
+
+                </div>
+              </div>
 
               
 
@@ -135,9 +139,16 @@
           
           // 메시지 박스를 동적으로 생성하고 페이지에 추가
           let chatLogTest = document.getElementById("chat-log");
+          
           chatLogTest.innerHTML += `<div class="message-box ${messageClass}">
               <div class="message-text">${data.message}</div>
             </div>`;
+
+          let chatLog = document.getElementById("chatbox");
+          chatLog.scrollTop = chatLog.scrollHeight;
+
+
+
         };
         chatSocket.onclose = function (e) {
           console.error('Chat socket closed unexpectedly');
@@ -167,6 +178,8 @@
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({'username': userName, 'message': message}));
             messageInputDom.value = '';
+            let chatLog = document.getElementById("chatbox");
+            chatLog.scrollTop = chatLog.scrollHeight;
           };
       });
     </script>
