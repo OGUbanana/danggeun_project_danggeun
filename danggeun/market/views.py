@@ -311,8 +311,12 @@ def product_status(request, product_id):
 
 
 
-def alert(request, alert_message):
-    return render(request, 'alert.html', {'alert_message': alert_message})
+def alert(request, alert_message, redirect_url='location'): # default 값을 'location'으로 설정
+    context = {
+        'alert_message': alert_message,
+        'redirect_url': redirect_url
+    }
+    return render(request, 'alert.html', context)
 
 
 @login_required
@@ -323,9 +327,9 @@ def write(request):
         if user_profile.is_authenticated == 'Y':
             return render(request, 'write.html')
         else:
-            return redirect('market:alert', alert_message='동네인증을 해주세요!!')
+            return redirect('market:alert', alert_message='동네인증을 해주세요!!', redirect_url='location')
     except UserProfile.DoesNotExist:
-        return redirect('market:alert', alert_message='동네인증을 해주세요!!')
+        return redirect('market:alert', alert_message='동네인증을 해주세요!!', redirect_url='location')
 
 
 def edit(request, product_id):

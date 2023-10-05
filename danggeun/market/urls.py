@@ -25,7 +25,7 @@ urlpatterns = [
     path('edit/<int:product_id>/', views.edit, name='edit'),
     path('create_form/', views.create_form, name='create_form'),
 
-    path('alert/<str:alert_message>/', views.alert, name='alert'),
+    path('alert/<str:alert_message>/<str:redirect_url>/', views.alert, name='alert'),
     
     # 끌어올리기
     path('pull_up/<int:product_id>', views.pull_up, name='pull_up'),

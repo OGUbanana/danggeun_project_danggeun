@@ -93,4 +93,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": message_content,
                 "username": username
             }))
-
