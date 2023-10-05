@@ -46,6 +46,8 @@ urlpatterns = [
     path('get_latest_chat/<int:pk>/', views.get_latest_chat, name='get_latest_chat'),
     path('confirm_deal/<int:product_id>/', views.ConfirmDealView.as_view(), name='confirm_deal'),
 
+    path('alert/<str:alert_message>/<str:redirect_url>/', views.alert, name='alert'),
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

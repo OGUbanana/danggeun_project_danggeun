@@ -311,7 +311,7 @@ def product_status(request, product_id):
 
 
 
-def alert(request, alert_message):
+def alert(request, alert_message, redirect_url):
     return render(request, 'alert.html', {'alert_message': alert_message})
 
 
