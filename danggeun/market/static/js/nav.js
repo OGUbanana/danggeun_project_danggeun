@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("buy_list").classList.toggle("orange-text");
   }else if (window.location.pathname == "/wish_list/") {
     document.getElementById("wish_list").classList.toggle("orange-text");
+  }else if (window.location.pathname == "/sell_list/") {
+    document.getElementById("trade_list").classList.toggle("orange-text");
   }
 
   document.querySelector('.user').addEventListener('click', function() {
