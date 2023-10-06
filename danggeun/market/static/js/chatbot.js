@@ -32,8 +32,8 @@ async function sendMessage() {
     const currentTimeString = getCurrentTimeString();
     chatbox.innerHTML += `
         <div class="message-box from-me">
-            <p class="s-text">${currentTimeString}</p>
             <div class="message-text">${message}</div>
+            <p class="s-text">${currentTimeString}</p>
         </div>
     `;
     chatbox.scrollTop = chatbox.scrollHeight;
